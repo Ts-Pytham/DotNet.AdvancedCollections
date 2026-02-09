@@ -1,4 +1,5 @@
-﻿using DotNet.AdvancedCollections.Utils;
+﻿using DotNet.AdvancedCollections.Exceptions;
+using DotNet.AdvancedCollections.Utils;
 using System.Collections;
 
 namespace DotNet.AdvancedCollections.Queue.PriorityQueue;
