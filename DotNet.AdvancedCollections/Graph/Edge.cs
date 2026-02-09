@@ -13,6 +13,7 @@
 /// <param name="cost">The cost of the edge.</param>
 public class Edge<T, U>(Vertex<T, U> predecessor, Vertex<T, U> sucessor, U cost)
     where U : notnull, IComparable<U>
+    where T : notnull
 {
     /// <summary>
     /// Gets or sets the vertex that the edge connects to.
