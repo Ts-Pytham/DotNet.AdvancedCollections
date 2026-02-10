@@ -8,7 +8,7 @@
 /// Initializes a new instance of the <see cref="Node{T}"/> class with the specified value.
 /// </remarks>
 /// <param name="value">The value to be stored in the node.</param>
-internal class Node<T>(T value) where T : notnull
+internal sealed class Node<T>(T value) where T : notnull
 {
     /// <summary>
     /// Gets or sets the value stored in the node.

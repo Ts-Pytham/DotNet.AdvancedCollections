@@ -1,0 +1,11 @@
+﻿global using DotNet.AdvancedCollections.Graph;
+global using DotNet.AdvancedCollections.Exceptions;
+global using DotNet.AdvancedCollections.Queue.Deque;
+global using DotNet.AdvancedCollections.Queue.PriorityQueue;
+global using DotNet.AdvancedCollections.Stack.PriorityStack;
+global using DotNet.AdvancedCollections.List.DoublyLinkedList;
+global using DotNet.AdvancedCollections.List.SortedList;
+global using DotNet.AdvancedCollections.Tree;
+global using DotNet.AdvancedCollections.Tree.BinarySearchTree;
+global using FluentAssertions;
+global using Xunit;
