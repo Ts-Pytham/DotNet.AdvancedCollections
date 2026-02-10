@@ -369,3 +369,4 @@ obj/
 docfx.log
 *.manifest
 DOCFX_GUIDE.md
+GITHUB_PAGES_SETUP.md
