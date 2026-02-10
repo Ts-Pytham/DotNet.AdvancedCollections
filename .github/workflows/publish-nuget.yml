@@ -4,11 +4,6 @@ on:
   release:
     types: [published]
   workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version number (e.g., 1.0.0)'
-        required: true
-        type: string
 
 jobs:
   build-and-publish:
@@ -35,11 +30,12 @@ jobs:
     - name: Pack
       run: dotnet pack src/DotNet.AdvancedCollections/DotNet.AdvancedCollections.csproj --configuration Release --no-build --output ./artifacts
 
-    - name: Push to NuGet
-      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+    - name: List artifacts
+      run: ls -la ./artifacts/
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: nuget-packages
-        path: ./artifacts/*.nupkg
+    - name: Push to NuGet
+      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+
+    - name: Push symbols to NuGet
+      run: dotnet nuget push ./artifacts/*.snupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      continue-on-error: true
