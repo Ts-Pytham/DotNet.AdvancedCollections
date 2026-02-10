@@ -52,21 +52,4 @@ public interface IGraph<TVertex, TEdge>
     /// <param name="v2">The second vertex of the edge.</param>
     /// <returns><see langword="true"/> if the edge is found; <see langword="false"/> otherwise.</returns>
     bool HasEdge(TVertex v1, TVertex v2);
-
-    /// <summary>
-    /// Determines if the graph has a vertex with the given name.
-    /// </summary>
-    /// <param name="name">The name of the vertex to search for.</param>
-    /// <param name="vertex">The vertex with the given name, if it exists in the graph.</param>
-    /// <returns>The vertex with the given name, if it exists in the graph.</returns>
-    bool TryGetVertex(TVertex name, out Vertex<TVertex, TEdge>? vertex);
-
-    /// <summary>
-    /// Searches for an edge between two vertices and returns it if found.
-    /// </summary>
-    /// <param name="v1">The starting vertex of the edge.</param>
-    /// <param name="v2">The ending vertex of the edge.</param>
-    /// <param name="edge">If found, the edge connecting the two vertices; otherwise, the default value of TEdge.</param>
-    bool TryGetEdge(TVertex v1, TVertex v2, out Edge<TVertex, TEdge>? edge);
-
 }

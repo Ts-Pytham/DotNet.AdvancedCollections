@@ -183,14 +183,6 @@ public class Graph<TVertex, TEdge>
         return edge is not null;
     }
 
-    /// <summary>
-    /// Searches for an edge between two vertices and returns it, along with the starting vertex, if found.
-    /// </summary>
-    /// <param name="v1">The starting vertex of the edge.</param>
-    /// <param name="v2">The ending vertex of the edge.</param>
-    /// <param name="vertex">If found, the starting vertex of the edge; otherwise, the default value of TVertex.</param>
-    /// <param name="edge">If found, the edge connecting the two vertices; otherwise, the default value of TEdge.</param>
-    /// <returns>The edge if it is found; otherwise, <see langword="null"/>.</returns>
     private bool TryGetEdge(
         TVertex v1, TVertex v2, 
         out Vertex<TVertex, TEdge>? vertex, 
