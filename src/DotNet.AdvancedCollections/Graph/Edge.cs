@@ -3,30 +3,33 @@
 /// <summary>
 /// Represents an edge in a graph, connecting two vertices and having a cost associated with it.
 /// </summary>
-/// <typeparam name="T">The type of the vertices connected by the edge.</typeparam>
-/// <typeparam name="U">The type of the cost associated with the edge.</typeparam>
+/// <typeparam name="TVertex">The type of the vertices connected by the edge.</typeparam>
+/// <typeparam name="TEdge">The type of the cost associated with the edge.</typeparam>
 /// <remarks>
 /// Initializes a new instance of the Edge class with the specified sucessor vertex, predecessor vertex, and cost.
 /// </remarks>
 /// <param name="sucessor">The sucessor vertex of the edge.</param>
 /// <param name="predecessor">The predecessor vertex of the edge.</param>
 /// <param name="cost">The cost of the edge.</param>
-public class Edge<T, U>(Vertex<T, U> predecessor, Vertex<T, U> sucessor, U cost)
-    where U : notnull, IComparable<U>
-    where T : notnull
+public class Edge<TVertex, TEdge>(
+    TVertex predecessor, 
+    TVertex sucessor, 
+    TEdge cost)
+        where TEdge : notnull, IComparable<TEdge>
+        where TVertex : notnull
 {
     /// <summary>
-    /// Gets or sets the vertex that the edge connects to.
+    /// Gets or sets the successor vertex in the graph.
     /// </summary>
-    public Vertex<T, U> Sucessor { get; set; } = sucessor;
-
+    public TVertex Sucessor { get; set; } = sucessor;
+    
     /// <summary>
-    /// The predecessor of this vertex in the graph.
+    /// Gets or sets the predecessor vertex in a traversal or pathfinding operation.
     /// </summary>
-    public Vertex<T, U> Predecessor { get; set; } = predecessor;
+    public TVertex Predecessor { get; set; } = predecessor;
 
     /// <summary>
     /// Gets or sets the cost of the edge.
     /// </summary>
-    public U Cost { get; set; } = cost;
+    public TEdge Cost { get; set; } = cost;
 }

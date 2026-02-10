@@ -52,4 +52,33 @@ public interface IGraph<TVertex, TEdge>
     /// <param name="v2">The second vertex of the edge.</param>
     /// <returns><see langword="true"/> if the edge is found; <see langword="false"/> otherwise.</returns>
     bool HasEdge(TVertex v1, TVertex v2);
+
+    /// <summary>
+    /// Gets the number of vertices in the mesh.
+    /// </summary>
+    /// <returns>The total number of vertices contained in the mesh.</returns>
+    int VertexCount();
+
+    /// <summary>
+    /// Returns the total number of edges in the graph.
+    /// </summary>
+    /// <returns>The number of edges currently present in the graph. Returns 0 if the graph contains no edges.</returns>
+    int EdgeCount();
+
+    /// <summary>
+    /// Returns an enumerable collection of all vertices in the graph.
+    /// </summary>
+    /// <returns>An <see cref="IEnumerable{TVertex}"/> containing the vertices of the graph. The collection may be empty if the
+    /// graph contains no vertices.</returns>
+    IEnumerable<TVertex> GetVertices();
+
+    /// <summary>
+    /// Returns a collection of edges that are connected to the specified vertex.
+    /// </summary>
+    /// <param name="vertex">The vertex for which to retrieve connected edges. Cannot be null.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing <see cref="Edge{TVertex, TEdge}"/> objects associated with 
+    /// the specified vertex. The collection will be empty if the
+    /// vertex has no connected edges.</returns>
+    IEnumerable<Edge<TVertex, TEdge>> GetEdges(TVertex vertex);
+
 }
