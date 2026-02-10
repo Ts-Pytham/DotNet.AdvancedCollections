@@ -19,30 +19,33 @@ using DotNet.AdvancedCollections.List.DoublyLinkedList;
 
 var list = new DoublyLinkedList<int>();
 
-// Add elements
+// Add elements (adds to the end)
 list.Add(1);
 list.Add(2);
 list.Add(3);
 
-// Insert at the beginning
-list.AddFirst(0);
-
-// Insert at the end
+// Add to the end explicitly
 list.AddLast(4);
 
+// Access elements by index
+Console.WriteLine(list[0]); // 1
+Console.WriteLine(list[1]); // 2
+
 // Iterate
+for (int i = 0; i < list.Count; i++)
+{
+    Console.WriteLine(list[i]);
+}
+
+// Or use foreach
 foreach (var item in list)
 {
     Console.WriteLine(item);
 }
 
-// Navigate backward
-var current = list.Tail;
-while (current != null)
-{
-    Console.WriteLine(current.Value);
-    current = current.Previous;
-}
+// Get first and last elements
+var first = list.GetFirst();
+var last = list.GetLast();
 ```
 
 ## SortedList&lt;T&gt;

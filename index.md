@@ -37,13 +37,14 @@ list.Add(3);
 var priorityQueue = new PriorityQueue<string>();
 priorityQueue.Enqueue("Task 1", 3);
 priorityQueue.Enqueue("Task 2", 1);
-var next = priorityQueue.Dequeue(); // Returns "Task 2" (highest priority)
+var next = priorityQueue.Dequeue(); // Returns "Task 1" (highest priority: 3)
 
 // Binary search tree
 var bst = new BinarySearchTree<int>();
 bst.Add(5);
 bst.Add(3);
 bst.Add(7);
+bool contains = bst.Contains(5); // true
 ```
 
 ## Navigation

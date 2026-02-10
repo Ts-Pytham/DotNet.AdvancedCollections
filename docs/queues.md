@@ -55,19 +55,30 @@ using DotNet.AdvancedCollections.Queue.Deque;
 var deque = new Deque<int>();
 
 // Add to front
-deque.EnqueueFirst(1);
+deque.PushFirst(1);
+deque.PushFirst(2);
+deque.PushFirst(5);
 
 // Add to back
-deque.EnqueueLast(2);
+deque.PushLast(10);
 
-// Remove from front
-var first = deque.DequeueFirst();
+// Check count
+Console.WriteLine($"Count: {deque.Count}");
+
+// Iterate
+foreach (var item in deque)
+{
+    Console.WriteLine(item);
+}
+
+// Remove from front (Dequeue)
+var first = deque.Dequeue();
 
 // Remove from back
-var last = deque.DequeueLast();
+var last = deque.PopLast();
 
 // Peek at elements without removing
-var peekFirst = deque.PeekFirst();
+var peekFirst = deque.Peek();
 var peekLast = deque.PeekLast();
 ```
 

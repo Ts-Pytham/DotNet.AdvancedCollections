@@ -47,30 +47,40 @@ int count = bst.Count;
 The tree supports different traversal types:
 
 ```csharp
-using DotNet.AdvancedCollections.Tree;
+using DotNet.AdvancedCollections.Tree.BinarySearchTree;
 
 var bst = new BinarySearchTree<int>();
 bst.Add(5);
 bst.Add(3);
 bst.Add(7);
+bst.Add(1);
+bst.Add(9);
 
 // In-order traversal (left, root, right)
-// Result: [3, 5, 7]
-foreach (var item in bst.Traverse(TraversalType.InOrder))
+// Result: [1, 3, 5, 7, 9]
+var inOrder = bst.InOrder();
+foreach (var item in inOrder)
 {
     Console.WriteLine(item);
 }
 
 // Pre-order traversal (root, left, right)
-// Result: [5, 3, 7]
-foreach (var item in bst.Traverse(TraversalType.PreOrder))
+var preOrder = bst.PreOrder();
+foreach (var item in preOrder)
 {
     Console.WriteLine(item);
 }
 
 // Post-order traversal (left, right, root)
-// Result: [3, 7, 5]
-foreach (var item in bst.Traverse(TraversalType.PostOrder))
+var postOrder = bst.PostOrder();
+foreach (var item in postOrder)
+{
+    Console.WriteLine(item);
+}
+
+// Or use the default iterator with Traversal property
+bst.Traversal = TraversalType.InOrder;
+foreach (var item in bst)
 {
     Console.WriteLine(item);
 }
