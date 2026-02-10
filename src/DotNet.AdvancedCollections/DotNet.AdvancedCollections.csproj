@@ -10,8 +10,8 @@
 
     <!-- Package Information -->
     <PackageId>DotNet.AdvancedCollections</PackageId>
-    <Version>1.0.0</Version>
-    <Authors>Johan Sánchez</Authors>
+    <Version>1.0.1</Version>
+    <Authors>Ts-Pytham</Authors>
     <Company>Ts-Pytham</Company>
     <Product>DotNet.AdvancedCollections</Product>
     <Description>Advanced and complementary data structures for modern .NET. Includes DoublyLinkedList, SortedList, PriorityQueue, Deque, PriorityStack, BinarySearchTree, and Graph implementations.</Description>

@@ -7,7 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.0] - 2024-02-08
+## [1.0.1] - 2026-02-10
+
+### Fixed
+- Corrected package metadata (removed duplicate Copyright entries)
+- Fixed copyright year (now correctly shows 2026)
+- Confirmed MIT license (removed conflicting GPL license file)
+- Added Company metadata to package
+
+## [1.0.0] - 2025-02-09
 
 ### Added
 - Initial release of DotNet.AdvancedCollections
@@ -31,5 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Production-ready implementations
 - Clean and explicit APIs
 
-[Unreleased]: https://github.com/Ts-Pytham/DotNet.AdvancedCollections/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/Ts-Pytham/DotNet.AdvancedCollections/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/Ts-Pytham/DotNet.AdvancedCollections/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/Ts-Pytham/DotNet.AdvancedCollections/releases/tag/v1.0.0
