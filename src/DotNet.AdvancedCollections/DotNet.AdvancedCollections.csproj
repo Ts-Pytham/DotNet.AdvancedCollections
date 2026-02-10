@@ -2,11 +2,40 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-	<LangVersion>latest</LangVersion>
-	<ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
+
+    <!-- Package Information -->
+    <PackageId>DotNet.AdvancedCollections</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Johan Sánchez</Authors>
+    <Company>Ts-Pytham</Company>
+    <Product>DotNet.AdvancedCollections</Product>
+    <Description>Advanced and complementary data structures for modern .NET. Includes DoublyLinkedList, SortedList, PriorityQueue, Deque, PriorityStack, BinarySearchTree, and Graph implementations.</Description>
+    <Copyright>Copyright (c) 2026 Johan Sánchez</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Ts-Pytham/DotNet.AdvancedCollections</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Ts-Pytham/DotNet.AdvancedCollections</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>collections;data-structures;queue;stack;tree;graph;priority-queue;deque;binary-search-tree;doubly-linked-list;advanced-collections</PackageTags>
+    <PackageReleaseNotes>See CHANGELOG.md for release notes</PackageReleaseNotes>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    
+    <!-- Documentation -->
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    
+    <!-- Optional: Include symbols for debugging -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>
