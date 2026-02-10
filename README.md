@@ -1,11 +1,9 @@
-# GenericCollectionsExtension
+# DotNet.AdvancedCollections
 
 [![](https://img.shields.io/badge/.NET8-red)](https://github.com/Ts-Pytham/GenericCollectionsExtension)
 [![](https://img.shields.io/badge/License-MIT-green)](https://github.com/Ts-Pytham/GenericCollectionsExtension/blob/master/LICENSE.txt)
 [![](https://img.shields.io/badge/Nuget-1.4.0-blue)](https://www.nuget.org/packages/GenericCollectionsExtension/)
 [![PayPal-donate-button](https://img.shields.io/badge/Paypal-donate-orange)](https://paypal.me/johansanchezdl?locale.x=es_XC)
-
-# DotNet.AdvancedCollections
 
 Advanced and complementary data structures for modern .NET.
 
@@ -48,7 +46,7 @@ variants, this library is for you.
 
 ## Included data structures
 
-New data structures were added that are derived from the traditional data structures, these are:
+New data structures were added that are derived from the traditional data structures:
 
 - Deque.
 - PriorityQueue.
@@ -67,7 +65,7 @@ For example, a queue could be used to hold tasks that need to be executed in the
 
 #### Queue Type:
 
-- Deque: Is a double-ended queue, which is a type of data structure that allows items to be added and removed from either end of the queue.
+- **Deque**: A double-ended queue, which is a type of data structure that allows items to be added and removed from either end of the queue.
   This means that items can be added to the front or back of the queue, and can also be removed from the front or back of the queue.
 
 **Example in code:**
@@ -94,7 +92,7 @@ Count: 3
 
 ```
 
-- Priority Queue: Is a data structure in which each item has a priority associated with it, and items are stored and retrieved in order of their priority.
+- **Priority Queue**: A data structure in which each item has a priority associated with it, and items are stored and retrieved in order of their priority.
   This means that when items are added to the queue, they are automatically placed in the correct position based on their priority, and when items are removed from the queue, the item with the highest priority is always selected first.
 
 **Example in code:**
@@ -134,7 +132,7 @@ A stack is a data structure that stores and retrieves items in a last-in-first-o
 This means that the last item that is added to the stack is also the first item that is removed from the stack.
 Stacks are useful for storing and managing data in applications where items need to be processed in the reverse order in which they are received.
 
-- Priority Stack: Is a type of data structure that combines the characteristics of a stack and a priority queue.
+- **Priority Stack**: A type of data structure that combines the characteristics of a stack and a priority queue.
   Like a stack, a priority stack stores and retrieves items in a last-in-first-out (LIFO) manner, but also allows items to be added and removed based on their priority.
   This means that items can be added to the top of the stack in any order, but when items are removed from the stack, the item with the highest priority is always selected first.
 
@@ -168,11 +166,11 @@ Value: 5
 
 ### List
 
-Is a data structure that stores a collection of items in a specific order. Lists allow items to be added, removed, and accessed by their position in the list. They are often used to store collections of data that need to be organized and accessed in a specific order.
+A list is a data structure that stores a collection of items in a specific order. Lists allow items to be added, removed, and accessed by their position in the list. They are often used to store collections of data that need to be organized and accessed in a specific order.
 
-- Sorted List: Is a data structure that is similar to a regular list, but maintains its items in a sorted order. This means that when items are added to the list, they are automatically placed in the correct position based on their sorting order. Sorted lists are useful in situations where it is necessary to access items in a specific order, such as in applications that require efficient search and retrieval of data.
+- **Sorted List**: A data structure that is similar to a regular list, but maintains its items in a sorted order. This means that when items are added to the list, they are automatically placed in the correct position based on their sorting order. Sorted lists are useful in situations where it is necessary to access items in a specific order, such as in applications that require efficient search and retrieval of data.
 
-- DoublyLinkedList: Is a data structure that consists of a set of nodes, where each node has two pointers: one pointing to the previous node in the list and one pointing to the next node in the list. This allows for efficient insertion and deletion of elements from the list, as well as the ability to traverse the list in both directions (from the beginning to the end and from the end to the beginning).
+- **DoublyLinkedList**: A data structure that consists of a set of nodes, where each node has two pointers: one pointing to the previous node in the list and one pointing to the next node in the list. This allows for efficient insertion and deletion of elements from the list, as well as the ability to traverse the list in both directions (from the beginning to the end and from the end to the beginning).
 
 **Example of SortedList in code:**
 
@@ -236,13 +234,13 @@ total items: 7
 
 ##### NOTE
 
-This implementation is different from the one implemented in System.Collections.Generic because this implementation does not use a key, and any class to be used must inherit the IComparable interface. Very important to look at this implementation and documentation.
+This implementation is different from the one implemented in `System.Collections.Generic` because this implementation does not use a key, and any class to be used must implement the `IComparable` interface. It is very important to review this implementation and documentation.
 
 ### Tree
 
-Is a data structure consisting of linked nodes. Nodes can have one or more children and each node can have a relationship with other nodes in the tree.
+A tree is a data structure consisting of linked nodes. Nodes can have one or more children and each node can have a relationship with other nodes in the tree.
 
-- Binary search tree: Is a type of data tree in which each node has a value that is smaller than all the values in its left subtree and larger than all the values in its right subtree. This allows for fast and efficient search in the tree.
+- **Binary search tree**: A type of tree in which each node has a value that is smaller than all the values in its left subtree and larger than all the values in its right subtree. This allows for fast and efficient search in the tree.
 
 **Example in code:**
 
