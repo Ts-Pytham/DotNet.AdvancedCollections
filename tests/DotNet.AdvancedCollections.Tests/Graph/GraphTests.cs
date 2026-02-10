@@ -207,8 +207,10 @@ public class GraphTests
 
         // Assert
         wasRemoved.Should().BeTrue();
-        graphWithEdge.Vertexs[0].Edges.Should().BeEmpty();
-        graphWithEdge.Vertexs[1].Edges.Should().BeEmpty();
+        graphWithEdge.TryGetVertex(fromVertex, out var vertexA);
+        graphWithEdge.TryGetVertex(toVertex, out var vertexB);
+        vertexA!.Edges.Should().BeEmpty();
+        vertexB!.Edges.Should().BeEmpty();
     }
 
     [Fact]
@@ -232,8 +234,10 @@ public class GraphTests
         // Assert
         firstEdgeRemoved.Should().BeTrue();
         secondEdgeRemoved.Should().BeTrue();
-        graphWithMultipleEdges.Vertexs[0].Edges.Should().BeEmpty();
-        graphWithMultipleEdges.Vertexs[2].Edges.Should().HaveCount(1);
+        graphWithMultipleEdges.TryGetVertex("A", out var vertexA);
+        graphWithMultipleEdges.TryGetVertex("C", out var vertexC);
+        vertexA!.Edges.Should().BeEmpty();
+        vertexC!.Edges.Should().HaveCount(1);
     }
 
     [Fact]

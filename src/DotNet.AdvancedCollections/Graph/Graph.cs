@@ -175,7 +175,7 @@ public class Graph<TVertex, TEdge>
         edge = null;
         vertex2 = null;
 
-        if(TryGetVertex(v1, out vertex) is false || TryGetVertex(v1, out vertex) is false)
+        if(TryGetVertex(v1, out vertex) is false || TryGetVertex(v2, out vertex2) is false)
         {
             return false;
         }
