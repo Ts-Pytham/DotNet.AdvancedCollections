@@ -68,11 +68,6 @@ public class Graph<TVertex, TEdge>
     /// <exception cref="ExistentVertexException">Thrown if the vertex already exists in the graph.</exception>
     public void Add(Vertex<TVertex, TEdge> item)
     {
-        if (HasVertex(item.VertexName))
-        {
-            throw new ExistentVertexException();
-        }
-
         AddVertex(item.VertexName);
     }
 
@@ -93,6 +88,9 @@ public class Graph<TVertex, TEdge>
 
         vertex.AddEdge(edge);
         vertex2.AddEdge(edge);
+
+        vertex.Successors.Add(vertex2);
+        vertex2.Predecessors.Add(vertex);
     }
 
     /// <inheritdoc cref="IGraph{TVertex, TEdge}.AddVertex(TVertex)"/>
@@ -263,7 +261,15 @@ public class Graph<TVertex, TEdge>
             return false;
         }
 
-        return vertex!.Edges.Remove(edge!) && vertex2!.Edges.Remove(edge!);
+        var isRemoved = vertex!.Edges.Remove(edge!) && vertex2!.Edges.Remove(edge!);
+
+        if(isRemoved)
+        {
+            vertex.Successors.Remove(vertex2!);
+            vertex2!.Predecessors.Remove(vertex);
+        }
+
+        return isRemoved;
     }
 
     /// <inheritdoc cref="IGraph{TVertex, TEdge}.RemoveVertex(TVertex)"/>
@@ -302,8 +308,7 @@ public class Graph<TVertex, TEdge>
             throw new NonExistentVertexException();
         }
 
-        return vertex!.Edges.Where(x => !x.Sucessor.VertexName.Equals(v))
-                           .Select(x => x.Sucessor);
+        return vertex!.Successors;
     }
 
     /// <summary>
@@ -319,7 +324,6 @@ public class Graph<TVertex, TEdge>
             throw new NonExistentVertexException();
         }
 
-        return vertex!.Edges.Where(x => !x.Predecessor.VertexName.Equals(v))
-                           .Select(x => x.Predecessor);
+        return vertex!.Predecessors;
     }
 }

@@ -23,6 +23,10 @@ public class Vertex<T, U>(T Vertex) : IEquatable<Vertex<T, U>>
     /// </summary>
     public List<Edge<T, U>> Edges { get; } = [];
 
+    public List<Vertex<T, U>> Predecessors { get; } = [];
+    
+    public List<Vertex<T, U>> Successors { get; } = [];
+
     /// <summary>
     /// Adds an edge to the list of edges connecting the vertex to other vertices.
     /// </summary>

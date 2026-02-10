@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="samples/DotNet.AdvancedCollections.Console/DotNet.AdvancedCollections.Console.csproj" Id="25d79fe7-966f-47e1-b15c-4ae7270743d4" />
   <Project Path="src/DotNet.AdvancedCollections/DotNet.AdvancedCollections.csproj" />
 </Solution>
