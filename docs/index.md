@@ -24,14 +24,14 @@ DotNet.AdvancedCollections provides advanced data structures that are not includ
 Add the NuGet package to your project:
 
 ```bash
-dotnet add package DotNet.AdvancedCollections
+dotnet add package TsPytham.DotNet.AdvancedCollections
 ```
 
 Or edit your `.csproj` file:
 
 ```xml
 <ItemGroup>
-  <PackageReference Include="DotNet.AdvancedCollections" Version="1.0.0" />
+  <PackageReference Include="TsPytham.DotNet.AdvancedCollections" Version="1.0.0" />
 </ItemGroup>
 ```
 

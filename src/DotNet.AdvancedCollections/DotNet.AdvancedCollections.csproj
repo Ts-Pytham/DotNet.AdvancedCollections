@@ -9,8 +9,8 @@
     <NoWarn>$(NoWarn);1591</NoWarn>
 
     <!-- Package Information -->
-    <PackageId>DotNet.AdvancedCollections</PackageId>
-    <Version>1.0.1</Version>
+    <PackageId>TsPytham.DotNet.AdvancedCollections</PackageId>
+    <Version>1.0.0</Version>
     <Authors>Ts-Pytham</Authors>
     <Company>Ts-Pytham</Company>
     <Product>DotNet.AdvancedCollections</Product>

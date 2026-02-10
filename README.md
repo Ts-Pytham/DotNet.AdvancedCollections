@@ -1,13 +1,13 @@
 # DotNet.AdvancedCollections
 
-[![](https://img.shields.io/badge/.NET8-red)](https://github.com/Ts-Pytham/GenericCollectionsExtension)
-[![](https://img.shields.io/badge/License-MIT-green)](https://github.com/Ts-Pytham/GenericCollectionsExtension/blob/master/LICENSE.txt)
-[![](https://img.shields.io/badge/Nuget-1.4.0-blue)](https://www.nuget.org/packages/GenericCollectionsExtension/)
+[![NuGet](https://img.shields.io/nuget/v/TsPytham.DotNet.AdvancedCollections.svg)](https://www.nuget.org/packages/TsPytham.DotNet.AdvancedCollections/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Documentation](https://img.shields.io/badge/docs-online-blue)](https://ts-pytham.github.io/DotNet.AdvancedCollections/)
 [![PayPal-donate-button](https://img.shields.io/badge/Paypal-donate-orange)](https://paypal.me/johansanchezdl?locale.x=es_XC)
 
 Advanced and complementary data structures for modern .NET.
 
-`DotNet.AdvancedCollections` provides production-ready data structures
+`TsPytham.DotNet.AdvancedCollections` provides production-ready data structures
 that are not included in `System.Collections`, designed with clean APIs,
 modern C# features, and performance in mind.
 

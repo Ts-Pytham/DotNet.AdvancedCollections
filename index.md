@@ -17,7 +17,7 @@ This library provides efficient and well-tested implementations of:
 ### Installation
 
 ```bash
-dotnet add package DotNet.AdvancedCollections
+dotnet add package TsPytham.DotNet.AdvancedCollections
 ```
 
 ### Basic Usage
