@@ -385,7 +385,7 @@ public class DoublyLinkedList<T> : IDoublyLinkedList<T>, IEnumerable<T>, ICollec
 
         internal SynchronizedDoublyLinkedList(DoublyLinkedList<T> list)
         {
-            _list = [.. list.AsEnumerable()];
+            _list = list;
             _lock = new object();
         }
 
