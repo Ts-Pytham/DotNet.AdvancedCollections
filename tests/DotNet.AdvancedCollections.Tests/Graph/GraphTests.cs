@@ -258,5 +258,247 @@ public class GraphTests
         firstRemovalAttempt.Should().BeFalse();
         secondRemovalAttempt.Should().BeFalse();
     }
+
+    [Fact]
+    public void GetNeighbors_FromVertexWithPredecessorsAndSuccessors_ShouldReturnAllNeighbors()
+    {
+        // Arrange
+        var targetVertex = "B";
+        var expectedNeighbors = new[] { "A", "C", "D" };
+        var graph = new Graph<string, int>()
+        {
+            new Vertex<string, int>("A"),
+            new Vertex<string, int>("B"),
+            new Vertex<string, int>("C"),
+            new Vertex<string, int>("D")
+        };
+        
+        // A -> B (B tiene A como predecesor)
+        graph.AddEdge("A", "B", 5);
+        
+        // B -> C (B tiene C como sucesor)
+        graph.AddEdge("B", "C", 2);
+        
+        // B -> D (B tiene D como sucesor)
+        graph.AddEdge("B", "D", 10);
+
+        // Act
+        var neighbors = graph.GetNeighbors(targetVertex);
+
+        // Assert
+        neighbors.Should().BeEquivalentTo(expectedNeighbors);
+        neighbors.Should().HaveCount(3);
+    }
+
+    [Fact]
+    public void GetNeighbors_FromVertexWithOnlyPredecessors_ShouldReturnOnlyPredecessors()
+    {
+        // Arrange
+        var targetVertex = "D";
+        var expectedNeighbors = new[] { "A", "B", "C" };
+        var graph = new Graph<string, int>()
+        {
+            new Vertex<string, int>("A"),
+            new Vertex<string, int>("B"),
+            new Vertex<string, int>("C"),
+            new Vertex<string, int>("D")
+        };
+        
+        graph.AddEdge("A", "D", 1);
+        graph.AddEdge("B", "D", 2);
+        graph.AddEdge("C", "D", 3);
+
+        // Act
+        var neighbors = graph.GetNeighbors(targetVertex);
+
+        // Assert
+        neighbors.Should().BeEquivalentTo(expectedNeighbors);
+        neighbors.Should().HaveCount(3);
+    }
+
+    [Fact]
+    public void GetNeighbors_FromVertexWithOnlySuccessors_ShouldReturnOnlySuccessors()
+    {
+        // Arrange
+        var targetVertex = "A";
+        var expectedNeighbors = new[] { "B", "C", "D" };
+        var graph = new Graph<string, int>()
+        {
+            new Vertex<string, int>("A"),
+            new Vertex<string, int>("B"),
+            new Vertex<string, int>("C"),
+            new Vertex<string, int>("D")
+        };
+        
+        graph.AddEdge("A", "B", 1);
+        graph.AddEdge("A", "C", 2);
+        graph.AddEdge("A", "D", 3);
+
+        // Act
+        var neighbors = graph.GetNeighbors(targetVertex);
+
+        // Assert
+        neighbors.Should().BeEquivalentTo(expectedNeighbors);
+        neighbors.Should().HaveCount(3);
+    }
+
+    [Fact]
+    public void GetNeighbors_FromIsolatedVertex_ShouldReturnEmpty()
+    {
+        // Arrange
+        var isolatedVertex = "D";
+        var graph = new Graph<string, int>()
+        {
+            new Vertex<string, int>("A"),
+            new Vertex<string, int>("B"),
+            new Vertex<string, int>("C"),
+            new Vertex<string, int>("D")
+        };
+        
+        graph.AddEdge("A", "B", 1);
+        graph.AddEdge("B", "C", 2);
+
+        // Act
+        var neighbors = graph.GetNeighbors(isolatedVertex);
+
+        // Assert
+        neighbors.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void GetNeighbors_FromNonExistentVertex_ShouldThrowException()
+    {
+        // Arrange
+        var nonExistentVertex = "Z";
+        var graph = new Graph<string, int>()
+        {
+            new Vertex<string, int>("A"),
+            new Vertex<string, int>("B")
+        };
+
+        // Act
+        var act = () => graph.GetNeighbors(nonExistentVertex);
+
+        // Assert
+        act.Should().Throw<DotNet.AdvancedCollections.Exceptions.NonExistentVertexException>();
+    }
+
+    [Fact]
+    public void Degree_FromVertexWithMultipleEdges_ShouldReturnCorrectDegree()
+    {
+        // Arrange
+        var targetVertex = "B";
+        var expectedDegree = 4; // 1 predecessor (A) + 3 successors (C, D, E)
+        var graph = new Graph<string, int>()
+        {
+            new Vertex<string, int>("A"),
+            new Vertex<string, int>("B"),
+            new Vertex<string, int>("C"),
+            new Vertex<string, int>("D"),
+            new Vertex<string, int>("E")
+        };
+        
+        graph.AddEdge("A", "B", 1);  // B tiene 1 predecesor
+        graph.AddEdge("B", "C", 2);  // B tiene 1 sucesor
+        graph.AddEdge("B", "D", 3);  // B tiene 2 sucesores
+        graph.AddEdge("B", "E", 4);  // B tiene 3 sucesores
+
+        // Act
+        var degree = graph.Degree(targetVertex);
+
+        // Assert
+        degree.Should().Be(expectedDegree);
+    }
+
+    [Fact]
+    public void Degree_FromIsolatedVertex_ShouldReturnZero()
+    {
+        // Arrange
+        var isolatedVertex = "D";
+        var graph = new Graph<string, int>()
+        {
+            new Vertex<string, int>("A"),
+            new Vertex<string, int>("B"),
+            new Vertex<string, int>("C"),
+            new Vertex<string, int>("D")
+        };
+        
+        graph.AddEdge("A", "B", 1);
+        graph.AddEdge("B", "C", 2);
+
+        // Act
+        var degree = graph.Degree(isolatedVertex);
+
+        // Assert
+        degree.Should().Be(0);
+    }
+
+    [Fact]
+    public void Degree_FromVertexWithOnlyIncomingEdges_ShouldReturnInDegree()
+    {
+        // Arrange
+        var targetVertex = "D";
+        var expectedDegree = 3;
+        var graph = new Graph<string, int>()
+        {
+            new Vertex<string, int>("A"),
+            new Vertex<string, int>("B"),
+            new Vertex<string, int>("C"),
+            new Vertex<string, int>("D")
+        };
+        
+        graph.AddEdge("A", "D", 1);
+        graph.AddEdge("B", "D", 2);
+        graph.AddEdge("C", "D", 3);
+
+        // Act
+        var degree = graph.Degree(targetVertex);
+
+        // Assert
+        degree.Should().Be(expectedDegree);
+    }
+
+    [Fact]
+    public void Degree_FromVertexWithOnlyOutgoingEdges_ShouldReturnOutDegree()
+    {
+        // Arrange
+        var targetVertex = "A";
+        var expectedDegree = 3;
+        var graph = new Graph<string, int>()
+        {
+            new Vertex<string, int>("A"),
+            new Vertex<string, int>("B"),
+            new Vertex<string, int>("C"),
+            new Vertex<string, int>("D")
+        };
+        
+        graph.AddEdge("A", "B", 1);
+        graph.AddEdge("A", "C", 2);
+        graph.AddEdge("A", "D", 3);
+
+        // Act
+        var degree = graph.Degree(targetVertex);
+
+        // Assert
+        degree.Should().Be(expectedDegree);
+    }
+
+    [Fact]
+    public void Degree_FromNonExistentVertex_ShouldThrowException()
+    {
+        // Arrange
+        var nonExistentVertex = "Z";
+        var graph = new Graph<string, int>()
+        {
+            new Vertex<string, int>("A"),
+            new Vertex<string, int>("B")
+        };
+
+        // Act
+        var act = () => graph.Degree(nonExistentVertex);
+
+        // Assert
+        act.Should().Throw<DotNet.AdvancedCollections.Exceptions.NonExistentVertexException>();
+    }
 }
 

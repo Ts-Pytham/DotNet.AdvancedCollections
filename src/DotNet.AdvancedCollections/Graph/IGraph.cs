@@ -81,4 +81,18 @@ public interface IGraph<TVertex, TEdge>
     /// vertex has no connected edges.</returns>
     IEnumerable<Edge<TVertex, TEdge>> GetEdges(TVertex vertex);
 
+    /// <summary>
+    /// Returns an enumerable collection of vertices that are directly connected to the specified vertex.
+    /// </summary>
+    /// <param name="vertex">The vertex for which to retrieve neighboring vertices. Must be a valid vertex in the graph.</param>
+    /// <returns>An enumerable collection of vertices adjacent to the specified vertex. If the vertex has no neighbors, the
+    /// collection is empty.</returns>
+    IEnumerable<TVertex> GetNeighbors(TVertex vertex);
+
+    /// <summary>
+    /// Gets the degree of the specified vertex.
+    /// </summary>
+    /// <param name="vertex">The vertex for which to calculate the degree. Cannot be null.</param>
+    /// <returns>The number of edges incident to the specified vertex.</returns>
+    int Degree(TVertex vertex);
 }

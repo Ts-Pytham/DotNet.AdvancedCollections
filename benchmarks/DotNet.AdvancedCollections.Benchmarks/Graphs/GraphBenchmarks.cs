@@ -155,4 +155,62 @@ public class GraphBenchmarks
             graph.RemoveEdge(edges[i].from, edges[i].to);
         }
     }
+
+    [Benchmark]
+    public void GetNeighbors()
+    {
+        var graph = new Graph<int, int>();
+        
+        // Setup
+        for (int i = 0; i < VertexCount; i++)
+        {
+            graph.AddVertex(i);
+        }
+        
+        for (int i = 0; i < VertexCount; i++)
+        {
+            for (int j = 0; j < EdgesPerVertex; j++)
+            {
+                int target = _random.Next(VertexCount);
+                int cost = _random.Next(1, 100);
+                graph.AddEdge(i, target, cost);
+            }
+        }
+        
+        // Benchmark: Get neighbors for multiple vertices
+        for (int i = 0; i < VertexCount; i++)
+        {
+            var neighbors = graph.GetNeighbors(i);
+            var list = neighbors.ToList(); // Force enumeration
+        }
+    }
+
+    [Benchmark]
+    public void Degree()
+    {
+        var graph = new Graph<int, int>();
+        
+        // Setup
+        for (int i = 0; i < VertexCount; i++)
+        {
+            graph.AddVertex(i);
+        }
+        
+        for (int i = 0; i < VertexCount; i++)
+        {
+            for (int j = 0; j < EdgesPerVertex; j++)
+            {
+                int target = _random.Next(VertexCount);
+                int cost = _random.Next(1, 100);
+                graph.AddEdge(i, target, cost);
+            }
+        }
+        
+        // Benchmark: Get degree for all vertices
+        int totalDegree = 0;
+        for (int i = 0; i < VertexCount; i++)
+        {
+            totalDegree += graph.Degree(i);
+        }
+    }
 }

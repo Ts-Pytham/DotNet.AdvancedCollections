@@ -1,6 +1,5 @@
 ﻿using DotNet.AdvancedCollections.Exceptions;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace DotNet.AdvancedCollections.Graph;
@@ -281,6 +280,29 @@ public class Graph<TVertex, TEdge>
         }
 
         return vertex!.Successors;
+    }
+
+    /// <inheritdoc cref="IGraph{TVertex, TEdge}.GetNeighbors(TVertex)"/>
+    public IEnumerable<TVertex> GetNeighbors(TVertex vertex)
+    {
+        if (TryGetVertex(vertex, out Vertex<TVertex, TEdge>? v) is false)
+        {
+            throw new NonExistentVertexException();
+        }
+
+        return v.Predecessors.Select(p => p.VertexName)
+            .Union(v.Successors.Select(s => s.VertexName));
+    }
+
+    /// <inheritdoc cref="IGraph{TVertex, TEdge}.Degree(TVertex)"/>
+    public int Degree(TVertex vertex)
+    {
+        if (TryGetVertex(vertex, out Vertex<TVertex, TEdge>? v) is false)
+        {
+            throw new NonExistentVertexException();
+        }
+
+        return v.Predecessors.Count + v.Successors.Count;
     }
 
     /// <summary>
