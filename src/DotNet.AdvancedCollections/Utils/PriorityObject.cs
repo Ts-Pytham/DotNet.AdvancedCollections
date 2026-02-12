@@ -1,4 +1,7 @@
-﻿namespace DotNet.AdvancedCollections.Utils;
+﻿using DotNet.AdvancedCollections.Queue.PriorityQueue;
+using DotNet.AdvancedCollections.Stack.PriorityStack;
+
+namespace DotNet.AdvancedCollections.Utils;
 
 /// <summary>
 /// Represents an object with a priority. This class defines comparison operators to allow objects of this type to be used in <see cref="PriorityStack{T}"/> and <see cref="PriorityQueue{T}"/>.

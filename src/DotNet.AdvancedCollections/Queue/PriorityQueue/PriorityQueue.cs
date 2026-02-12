@@ -101,7 +101,7 @@ public class PriorityQueue<T> : IPriorityQueue<T>, IEnumerable<T>, ICollection<T
         return value;
     }
 
-    /// <inheritdoc cref="IQueue{T}.TryDequeue(out T?)"/>
+    /// <inheritdoc cref="IQueue{T}.TryDequeue(out T)"/>
     public bool TryDequeue(out T? result)
     {
         if (!IsEmpty)
