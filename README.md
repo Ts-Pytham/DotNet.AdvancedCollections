@@ -60,13 +60,14 @@ variants, this library is for you.
 
 New data structures were added that are derived from the traditional data structures:
 
-- Deque.
-- PriorityQueue.
-- PriorityStack.
-- Binary Search Tree.
-- SortedList.
-- DoublyLinkedList.
-- Graph.
+- **Deque** - Double-ended queue
+- **PriorityQueue** - Priority-based queue
+- **PriorityStack** - Priority-based stack
+- **Binary Search Tree** - Self-balancing BST
+- **SortedList** - Automatically sorted list
+- **DoublyLinkedList** - Two-way linked list
+- **Graph** (Adjacency List) - Dictionary-based graph for sparse graphs
+- **AdjacencyMatrixGraph** - Matrix-based graph for dense graphs and fast edge lookups
 
 ### Queue
 
@@ -294,7 +295,39 @@ Count InOrder: 12
 
 A graph is a data structure that consists of a finite set of vertices (also known as nodes) and a set of edges connecting these vertices. The vertices represent the entities being modeled, and the edges represent the relationships between them. Graphs are often used to represent networks, such as social networks, communication networks, and transportation networks. They are also used in computer science to represent data structures such as trees and maps.
 
-**Example in code:**
+#### Graph Implementations
+
+This library provides **two graph implementations**, each optimized for different use cases:
+
+##### 1. **Graph (Adjacency List)**
+
+Uses a dictionary-based adjacency list representation. **Best for sparse graphs** (few edges relative to vertices).
+
+**Advantages:**
+- ? Memory efficient: O(V + E) space
+- ? Fast neighbor iteration: O(degree)
+- ? Ideal for traversal algorithms (BFS, DFS)
+
+**Use when:**
+- Your graph is sparse (E < V²/4)
+- You iterate neighbors frequently
+- Memory is a concern
+
+##### 2. **AdjacencyMatrixGraph**
+
+Uses a matrix with bidirectional vertex-to-index mapping. **Best for dense graphs** or when edge lookups are frequent.
+
+**Advantages:**
+- ? Ultra-fast edge checking: O(1)
+- ? Fast edge addition/removal: O(1)
+- ? Ideal for algorithms requiring frequent edge queries
+
+**Use when:**
+- Your graph is dense (E > V²/3)
+- You check edge existence frequently
+- You know the vertex count in advance
+
+**Example in code (Adjacency List):**
 
 ```C#
 var graph = new Graph<char, int>
@@ -318,6 +351,53 @@ B:
 C:
 */
 ```
+
+**Example in code (Adjacency Matrix):**
+
+```C#
+var graph = new AdjacencyMatrixGraph<char, int>(initialCapacity: 10);
+
+graph.AddVertex('A');
+graph.AddVertex('B');
+graph.AddVertex('C');
+
+graph.AddEdge('A', 'B', 10);
+graph.AddEdge('A', 'C', 5);
+
+// O(1) edge checking
+if (graph.HasEdge('A', 'B'))
+{
+    Console.WriteLine("A is connected to B");
+}
+
+// Get all neighbors
+foreach(var neighbor in graph.GetNeighbors('A'))
+{
+    Console.WriteLine($"Neighbor: {neighbor}");
+}
+
+/*
+A is connected to B
+Neighbor: B
+Neighbor: C
+*/
+```
+
+**Performance Comparison:**
+
+| Operation | Adjacency List | Adjacency Matrix |
+|-----------|---------------|------------------|
+| Add Vertex | O(1) | O(1) amortized* |
+| Add Edge | O(1) | O(1) |
+| Has Edge | O(degree) | **O(1)** ? |
+| Get Neighbors | **O(degree)** ? | O(V) |
+| Space | **O(V + E)** ?? | O(V²) |
+
+*Requires resize when capacity exceeded
+
+> ?? **Choosing the right implementation:**
+> - Use `Graph` for sparse graphs and traversal-heavy workloads
+> - Use `AdjacencyMatrixGraph` for dense graphs and edge-lookup-heavy workloads
 
 ## Project status
 
