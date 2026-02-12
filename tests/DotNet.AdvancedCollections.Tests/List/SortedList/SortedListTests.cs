@@ -304,4 +304,148 @@ public class SortedListTests
         list.Distinct().Count().Should().Be(len);
         list.Should().BeInAscendingOrder();
     }
+
+    [Fact]
+    public void Add_WithAscendingOrder_WhenItemEqualToFirstElement_ShouldInsertAtBeginning()
+    {
+        // Arrange
+        var sortedList = new SortedList<int>
+        {
+            10, 20, 30, 40
+        };
+
+        // Act
+        sortedList.Add(10);
+
+        // Assert
+        sortedList.Should().Equal([10, 10, 20, 30, 40]);
+        sortedList[0].Should().Be(10);
+        sortedList.Count.Should().Be(5);
+    }
+
+    [Fact]
+    public void Add_WithAscendingOrder_WhenItemLessThanFirstElement_ShouldInsertAtBeginning()
+    {
+        // Arrange
+        var sortedList = new SortedList<int>
+        {
+            10, 20, 30, 40
+        };
+
+        // Act
+        sortedList.Add(5);
+
+        // Assert
+        sortedList.Should().Equal([5, 10, 20, 30, 40]);
+        sortedList[0].Should().Be(5);
+        sortedList.Count.Should().Be(5);
+    }
+
+    [Fact]
+    public void Add_WithAscendingOrder_WhenItemEqualToLastElement_ShouldInsertAtEnd()
+    {
+        // Arrange
+        var sortedList = new SortedList<int>
+        {
+            10, 20, 30, 40
+        };
+
+        // Act
+        sortedList.Add(40);
+
+        // Assert
+        sortedList.Should().Equal([10, 20, 30, 40, 40]);
+        sortedList[sortedList.Count - 1].Should().Be(40);
+        sortedList.Count.Should().Be(5);
+    }
+
+    [Fact]
+    public void Add_WithAscendingOrder_WhenItemGreaterThanLastElement_ShouldInsertAtEnd()
+    {
+        // Arrange
+        var sortedList = new SortedList<int>
+        {
+            10, 20, 30, 40
+        };
+
+        // Act
+        sortedList.Add(50);
+
+        // Assert
+        sortedList.Should().Equal([10, 20, 30, 40, 50]);
+        sortedList[sortedList.Count - 1].Should().Be(50);
+        sortedList.Count.Should().Be(5);
+    }
+
+    [Fact]
+    public void Add_WithDescendingOrder_WhenItemEqualToFirstElement_ShouldInsertAtBeginning()
+    {
+        // Arrange
+        var sortedList = new SortedList<int>(Criterion.Descending)
+        {
+            40, 30, 20, 10
+        };
+
+        // Act
+        sortedList.Add(40);
+
+        // Assert
+        sortedList.Should().Equal([40, 40, 30, 20, 10]);
+        sortedList[0].Should().Be(40);
+        sortedList.Count.Should().Be(5);
+    }
+
+    [Fact]
+    public void Add_WithDescendingOrder_WhenItemGreaterThanFirstElement_ShouldInsertAtBeginning()
+    {
+        // Arrange
+        var sortedList = new SortedList<int>(Criterion.Descending)
+        {
+            40, 30, 20, 10
+        };
+
+        // Act
+        sortedList.Add(50);
+
+        // Assert
+        sortedList.Should().Equal([50, 40, 30, 20, 10]);
+        sortedList[0].Should().Be(50);
+        sortedList.Count.Should().Be(5);
+    }
+
+    [Fact]
+    public void Add_WithDescendingOrder_WhenItemEqualToLastElement_ShouldInsertAtEnd()
+    {
+        // Arrange
+        var sortedList = new SortedList<int>(Criterion.Descending)
+        {
+            40, 30, 20, 10
+        };
+
+        // Act
+        sortedList.Add(10);
+
+        // Assert
+        sortedList.Should().Equal([40, 30, 20, 10, 10]);
+        sortedList[sortedList.Count - 1].Should().Be(10);
+        sortedList.Count.Should().Be(5);
+    }
+
+    [Fact]
+    public void Add_WithDescendingOrder_WhenItemLessThanLastElement_ShouldInsertAtEnd()
+    {
+        // Arrange
+        var sortedList = new SortedList<int>(Criterion.Descending)
+        {
+            40, 30, 20, 10
+        };
+
+        // Act
+        sortedList.Add(5);
+
+        // Assert
+        sortedList.Should().Equal([40, 30, 20, 10, 5]);
+        sortedList[sortedList.Count - 1].Should().Be(5);
+        sortedList.Count.Should().Be(5);
+    }
 }

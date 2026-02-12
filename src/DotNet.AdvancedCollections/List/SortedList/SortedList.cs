@@ -30,62 +30,20 @@ public class SortedList<T> : ISortedList<T>, ICollection<T>, IEnumerable<T>, IRe
         {
             ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, Count);
 
-            if (value.CompareTo(_sortedList[index]) == 0)
+            if (Compare(value, _sortedList[index]) == 0)
+                return;
+
+            bool validLeft = index == 0 || Compare(_sortedList[index - 1], value) <= 0;
+            bool validRight = index == Count - 1 || Compare(value, _sortedList[index + 1]) <= 0;
+
+            if (validLeft && validRight)
             {
+                _sortedList[index] = value;
                 return;
             }
 
-            if (index == 0 && Count == 1)
-                _sortedList[index] = value;
-            else if (index == 0 && Count > 1)
-            {
-                if (value.CompareTo(this[1]) <= 0 && Criterion == Criterion.Ascending)
-                {
-                    _sortedList[index] = value;
-                }
-                else if (value.CompareTo(this[1]) >= 0 && Criterion == Criterion.Descending)
-                {
-                    _sortedList[index] = value;
-                }
-                else
-                {
-                    _sortedList.RemoveAt(index);
-                    Add(value);
-                }
-            }
-            else if (index == Count - 1)
-            {
-                if (value.CompareTo(this[Count - 2]) >= 0 && Criterion == Criterion.Ascending)
-                {
-                    _sortedList[index] = value;
-                }
-                else if (value.CompareTo(this[Count - 2]) <= 0 && Criterion == Criterion.Descending)
-                {
-                    _sortedList[index] = value;
-                }
-                else
-                {
-                    _sortedList.RemoveAt(index);
-                    Add(value);
-                }
-            }
-            else
-            {
-                if (value.CompareTo(this[index - 1]) >= 0 && value.CompareTo(this[index + 1]) <= 0 && Criterion == Criterion.Ascending)
-                {
-                    _sortedList[index] = value;
-                }
-                else if (value.CompareTo(this[index - 1]) <= 0 && value.CompareTo(this[index + 1]) >= 0 && Criterion == Criterion.Descending)
-                {
-                    _sortedList[index] = value;
-                }
-                else
-                {
-                    _sortedList.RemoveAt(index);
-                    Add(value);
-                }
-            }
-
+            _sortedList.RemoveAt(index);
+            Add(value);
         }
     }
 
@@ -140,72 +98,23 @@ public class SortedList<T> : ISortedList<T>, ICollection<T>, IEnumerable<T>, IRe
     }
 
     /// <summary>
-    /// Adds an item and sorts it.
+    /// Inserts the specified item into the collection while maintaining the sort order.
     /// </summary>
-    /// <param name="item">The object to be added</param>
+    /// <remarks>If the collection allows duplicate items, the new item is inserted before any existing items
+    /// that compare equal. The sort order is determined by the collection's comparer or the default comparer for the
+    /// type.</remarks>
+    /// <param name="item">The item to add to the collection. The item is inserted at the position determined by the collection's sort
+    /// order.</param>
     public void Add(T item)
     {
         if (Count == 0)
         {
             _sortedList.Add(item);
+            return;
         }
-        else
-        {
-            AddSorted(item);
-        }
-    }
-    /// <summary>
-    /// Adds an item and sorts it.
-    /// </summary>
-    /// <param name="item">The object to be added</param>
-    private void AddSorted(T item)
-    {
-        if (Criterion == Criterion.Ascending)
-        {
-            if (item.CompareTo(_sortedList[0]) == -1) // Initial Position
-            {
-                _sortedList.Insert(0, item);
-            }
-            else if (item.CompareTo(_sortedList[Count - 1]) >= 0) // Last Position
-            {
-                _sortedList.Insert(Count, item);
-            }
-            else
-            {
-                for (int index = 1; index != Count; index++)
-                {
-                    if (item.CompareTo(_sortedList[index]) == -1)
-                    {
-                        _sortedList.Insert(index, item);
-                        return;
-                    }
-                }
 
-            }
-        }
-        else
-        {
-            if (item.CompareTo(_sortedList[0]) >= 0) // Initial Position
-            {
-                _sortedList.Insert(0, item);
-            }
-            else if (item.CompareTo(_sortedList[Count - 1]) == -1) // Last Position
-            {
-                _sortedList.Insert(Count, item);
-            }
-            else
-            {
-                for (int index = 1; index != Count; index++)
-                {
-                    if (item.CompareTo(_sortedList[index]) >= 0)
-                    {
-                        _sortedList.Insert(index, item);
-                        return;
-                    }
-                }
-
-            }
-        }
+        var pos = LowerBound(item);
+        _sortedList.Insert(pos, item);
     }
 
     /// <summary>
@@ -256,42 +165,79 @@ public class SortedList<T> : ISortedList<T>, ICollection<T>, IEnumerable<T>, IRe
     /// <returns>The index of the element in the list if found, or -1 if not found.</returns>
     public int BinarySearch(T item)
     {
-        int low = 0;
-        int high = _sortedList.Count - 1;
+        var index = LowerBound(item);
 
-        while (low <= high)
+        if(index < Count && _sortedList[index].CompareTo(item) == 0)
         {
-            int mid = low + (high - low) / 2;
-
-            if (item.CompareTo(_sortedList[mid]) == 0)
-            {
-                return mid;
-            }
-            else if (item.CompareTo(_sortedList[mid]) < 0)
-            {
-                if (Criterion == Criterion.Ascending)
-                {
-                    high = mid - 1;
-                }
-                else
-                {
-                    low = mid + 1;
-                }
-            }
-            else
-            {
-                if (Criterion == Criterion.Ascending)
-                {
-                    low = mid + 1;
-                }
-                else
-                {
-                    high = mid - 1;
-                }
-            }
+            return index;
         }
 
         return -1;
+    }
+
+    /// <summary>
+    /// Finds the index of the first element in the sorted list that is not less than the specified item, according to
+    /// the current sorting criterion.
+    /// </summary>
+    /// <remarks>This method performs a binary search to determine the lower bound position for the specified
+    /// item. The result can be used as an insertion index to maintain the list's sorted order. The sorting direction is
+    /// determined by the current value of the Criterion property.</remarks>
+    /// <param name="item">The item to locate in the sorted list. The comparison is performed using the current sorting criterion.</param>
+    /// <returns>The zero-based index of the first element that is not less than the specified item. If all elements are less
+    /// than the item, returns the index at which the item can be inserted to maintain the sort order.</returns>
+    private int LowerBound(T item)
+    {
+        return Criterion == Criterion.Ascending
+            ? LowerBoundAscending(item)
+            : LowerBoundDescending(item);
+    }
+
+    /// <summary>
+    /// Binary search for ascending order - optimized to avoid condition checks in the loop.
+    /// </summary>
+    private int LowerBoundAscending(T item)
+    {
+        int low = 0;
+        int high = _sortedList.Count;
+        
+        while (low < high)
+        {
+            int mid = low + (high - low) / 2;
+            if (_sortedList[mid].CompareTo(item) < 0)
+            {
+                low = mid + 1;
+            }
+            else
+            {
+                high = mid;
+            }
+        }
+        
+        return low;
+    }
+
+    /// <summary>
+    /// Binary search for descending order - optimized to avoid condition checks in the loop.
+    /// </summary>
+    private int LowerBoundDescending(T item)
+    {
+        int low = 0;
+        int high = _sortedList.Count;
+        
+        while (low < high)
+        {
+            int mid = low + (high - low) / 2;
+            if (_sortedList[mid].CompareTo(item) > 0)
+            {
+                low = mid + 1;
+            }
+            else
+            {
+                high = mid;
+            }
+        }
+        
+        return low;
     }
 
     public bool Remove(T item)
@@ -324,6 +270,24 @@ public class SortedList<T> : ISortedList<T>, ICollection<T>, IEnumerable<T>, IRe
     public ISortedList<T> Synchronized()
     {
         return new SynchronizedSortedList(this);
+    }
+
+    /// <summary>
+    /// Compares two values according to the specified sorting criterion.
+    /// </summary>
+    /// <remarks>
+    /// Si el criterio de ordenación es ascendente, el método compara x con y; si es descendente, compara y con x.
+    /// Ambos x e y deben implementar IComparable&lt;T&gt;.
+    /// </remarks>
+    /// <param name="x">The first value to compare.</param>
+    /// <param name="y">The second value to compare.</param>
+    /// <returns>A signed integer that indicates the relative values of x and y: less than zero if x is less than y; zero if x
+    /// equals y; greater than zero if x is greater than y. The comparison direction depends on the sorting criterion.</returns>
+    private int Compare(T x, T y)
+    {
+        return Criterion == Criterion.Ascending
+            ? x.CompareTo(y)
+            : y.CompareTo(x);
     }
 
     internal class SynchronizedSortedList : ISortedList<T>
