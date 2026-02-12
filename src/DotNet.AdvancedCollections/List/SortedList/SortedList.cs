@@ -187,14 +187,23 @@ public class SortedList<T> : ISortedList<T>, ICollection<T>, IEnumerable<T>, IRe
     /// than the item, returns the index at which the item can be inserted to maintain the sort order.</returns>
     private int LowerBound(T item)
     {
+        return Criterion == Criterion.Ascending
+            ? LowerBoundAscending(item)
+            : LowerBoundDescending(item);
+    }
+
+    /// <summary>
+    /// Binary search for ascending order - optimized to avoid condition checks in the loop.
+    /// </summary>
+    private int LowerBoundAscending(T item)
+    {
         int low = 0;
         int high = _sortedList.Count;
+        
         while (low < high)
         {
             int mid = low + (high - low) / 2;
-            var comparisonResult = _sortedList[mid].CompareTo(item);
-            if ((Criterion == Criterion.Ascending && comparisonResult < 0) ||
-                (Criterion == Criterion.Descending && comparisonResult > 0))
+            if (_sortedList[mid].CompareTo(item) < 0)
             {
                 low = mid + 1;
             }
@@ -203,6 +212,31 @@ public class SortedList<T> : ISortedList<T>, ICollection<T>, IEnumerable<T>, IRe
                 high = mid;
             }
         }
+        
+        return low;
+    }
+
+    /// <summary>
+    /// Binary search for descending order - optimized to avoid condition checks in the loop.
+    /// </summary>
+    private int LowerBoundDescending(T item)
+    {
+        int low = 0;
+        int high = _sortedList.Count;
+        
+        while (low < high)
+        {
+            int mid = low + (high - low) / 2;
+            if (_sortedList[mid].CompareTo(item) > 0)
+            {
+                low = mid + 1;
+            }
+            else
+            {
+                high = mid;
+            }
+        }
+        
         return low;
     }
 
@@ -239,15 +273,16 @@ public class SortedList<T> : ISortedList<T>, ICollection<T>, IEnumerable<T>, IRe
     }
 
     /// <summary>
-    /// Compares two values of type T according to the specified sorting criterion.
+    /// Compares two values according to the specified sorting criterion.
     /// </summary>
-    /// <remarks>The comparison direction is determined by the Criterion property. If Criterion is Ascending,
-    /// the method compares x to y; if Descending, it compares y to x. Both x and y must implement
-    /// IComparable<T>.</remarks>
+    /// <remarks>
+    /// Si el criterio de ordenación es ascendente, el método compara x con y; si es descendente, compara y con x.
+    /// Ambos x e y deben implementar IComparable&lt;T&gt;.
+    /// </remarks>
     /// <param name="x">The first value to compare.</param>
     /// <param name="y">The second value to compare.</param>
     /// <returns>A signed integer that indicates the relative values of x and y: less than zero if x is less than y; zero if x
-    /// equals y; greater than zero if x is greater than y, according to the current sorting criterion.</returns>
+    /// equals y; greater than zero if x is greater than y. The comparison direction depends on the sorting criterion.</returns>
     private int Compare(T x, T y)
     {
         return Criterion == Criterion.Ascending
