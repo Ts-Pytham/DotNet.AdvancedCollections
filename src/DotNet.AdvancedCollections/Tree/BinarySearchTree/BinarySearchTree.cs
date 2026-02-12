@@ -68,7 +68,7 @@ public class BinarySearchTree<T> : IBinarySearchTree<T>, IEnumerable<T>
     }
 
     /// <summary>
-    /// This method adds the specified item of type <see cref="{T}"/> to a <see cref="BinarySearchTree{T}"/>. 
+    /// This method adds the specified item of type <typeparamref name="T"/> to a <see cref="BinarySearchTree{T}"/>. 
     /// The root parameter specifies the root node of the tree, which should be of type IBinaryTreeNode.
     /// </summary>
     /// <param name="item">This is the item to be added to the <see cref="BinarySearchTree{T}"/>. It should be of the type specified by the T type parameter.</param>

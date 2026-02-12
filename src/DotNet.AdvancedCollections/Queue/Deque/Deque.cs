@@ -113,7 +113,7 @@ public class Deque<T> : IDeque<T>, IEnumerable<T>
         return value;
     }
 
-    /// <inheritdoc cref="IQueue{T}.TryDequeue(out T?)"/>
+    /// <inheritdoc cref="IQueue{T}.TryDequeue(out T)"/>
     public bool TryDequeue(out T? result)
     {
         if (!IsEmpty)

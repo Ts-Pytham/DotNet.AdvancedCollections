@@ -1,5 +1,6 @@
 ﻿using DotNet.AdvancedCollections.Exceptions;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DotNet.AdvancedCollections.Graph;
 
@@ -16,12 +17,12 @@ public class Graph<TVertex, TEdge>
     /// <summary>
     /// Gets the list of vertices in the graph.
     /// </summary>
-    public List<Vertex<TVertex, TEdge>> Vertexs { get; }
+    private readonly Dictionary<TVertex, Vertex<TVertex, TEdge>> _vertices;
 
     /// <summary>
     /// Gets the number of vertices in the graph.
     /// </summary>
-    public int Count => Vertexs.Count;
+    public int Count => _vertices.Count;
 
     /// <summary>
     /// Gets a value indicating whether the graph is read-only.
@@ -33,17 +34,15 @@ public class Graph<TVertex, TEdge>
     /// </summary>
     public Graph()
     {
-        Vertexs = [];
+        _vertices = [];
     }
 
     /// <summary>
     /// Constructs a new instance of the graph with a single vertex.
     /// </summary>
     /// <param name="item">The vertex to be added to the graph.</param>
-    public Graph(Vertex<TVertex, TEdge> item)
+    public Graph(Vertex<TVertex, TEdge> item) : this()
     {
-        Vertexs = [];
-
         Add(item);
     }
 
@@ -51,10 +50,8 @@ public class Graph<TVertex, TEdge>
     /// Constructs a new instance of the graph with a collection of vertices.
     /// </summary>
     /// <param name="items">The vertices to be added to the graph.</param>
-    public Graph(IEnumerable<Vertex<TVertex, TEdge>> items)
+    public Graph(IEnumerable<Vertex<TVertex, TEdge>> items) : this()
     {
-        Vertexs = [];
-
         foreach(var item in items)
         {
             Add(item);
@@ -84,7 +81,7 @@ public class Graph<TVertex, TEdge>
             throw new NonExistentVertexException();
         }
 
-        var edge = new Edge<TVertex, TEdge>(vertex, vertex2, cost);
+        var edge = new Edge<TVertex, TEdge>(vertex.VertexName, vertex2.VertexName, cost);
 
         vertex.AddEdge(edge);
         vertex2.AddEdge(edge);
@@ -101,7 +98,7 @@ public class Graph<TVertex, TEdge>
             throw new ExistentVertexException();
         }
 
-        Vertexs.Add(new Vertex<TVertex, TEdge>(vertex));
+        _vertices[vertex] = new Vertex<TVertex, TEdge>(vertex);
     }
 
     /// <summary>
@@ -109,7 +106,7 @@ public class Graph<TVertex, TEdge>
     /// </summary>
     public void Clear()
     {
-        Vertexs.Clear();
+        _vertices.Clear();
     }
 
     /// <summary>
@@ -119,7 +116,7 @@ public class Graph<TVertex, TEdge>
     /// <returns><see langword="true"/> if the vertex is found in the graph; otherwise, <see langword="false"/>.</returns>
     public bool Contains(Vertex<TVertex, TEdge> item)
     {
-        return Vertexs.Contains(item);
+        return _vertices.ContainsKey(item.VertexName);
     }
 
     /// <summary>
@@ -129,7 +126,7 @@ public class Graph<TVertex, TEdge>
     /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
     public void CopyTo(Vertex<TVertex, TEdge>[] array, int arrayIndex)
     {
-        Vertexs.CopyTo(array, arrayIndex);
+        _vertices.Values.CopyTo(array, arrayIndex);
     }
 
     /// <summary>
@@ -138,25 +135,12 @@ public class Graph<TVertex, TEdge>
     /// <returns>An enumerator that can be used to iterate through the graph.</returns>
     public IEnumerator<Vertex<TVertex, TEdge>> GetEnumerator()
     {
-        return Vertexs.GetEnumerator();
+        return _vertices.Values.GetEnumerator();
     }
 
     /// <inheritdoc cref="IGraph{TVertex, TEdge}.HasEdge(TVertex, TVertex)"/>
     public bool HasEdge(TVertex v1, TVertex v2)
-    {
-        if(TryGetVertex(v1, out Vertex<TVertex, TEdge>? vertex) is false ||
-           TryGetVertex(v2, out Vertex<TVertex, TEdge>? vertex2) is false)
-        {
-            return false;
-        }
-
-        if(vertex is null || vertex2 is null)
-        {
-            return false;
-        } 
-
-        return vertex.Edges.Exists(x => x.Sucessor.Equals(vertex2));
-    }
+        => TryGetEdge(v1, v2, out _);
 
     /// <summary>
     /// Searches for an edge between two vertices and returns it if found.
@@ -164,52 +148,39 @@ public class Graph<TVertex, TEdge>
     /// <param name="v1">The starting vertex of the edge.</param>
     /// <param name="v2">The ending vertex of the edge.</param>
     /// <param name="edge">If found, the edge connecting the two vertices; otherwise, the default value of TEdge.</param>
-    public bool TryGetEdge(TVertex v1, TVertex v2, out Edge<TVertex, TEdge>? edge)
+    public bool TryGetEdge(
+        TVertex v1, 
+        TVertex v2, 
+        [NotNullWhen(true)] out Edge<TVertex, TEdge>? edge)
     {
         edge = null;
-
-        if (TryGetVertex(v1, out Vertex<TVertex, TEdge>? vertex) is false ||
-            TryGetVertex(v2, out Vertex<TVertex, TEdge>? vertex2) is false)
+        if (TryGetVertex(v1, out Vertex<TVertex, TEdge>? vertex) is false)
         {
             return false;
         }
 
-        if(vertex is null || vertex2 is null)
-        {
-            return false;
-        }
+        edge = vertex.Edges.Find(e =>
+            EqualityComparer<TVertex>.Default.Equals(e.Sucessor, v2));
 
-        edge = vertex.Edges.Find(x => x.Sucessor.Equals(vertex2));
         return edge is not null;
     }
 
-    /// <summary>
-    /// Searches for an edge between two vertices and returns it, along with the starting vertex, if found.
-    /// </summary>
-    /// <param name="v1">The starting vertex of the edge.</param>
-    /// <param name="v2">The ending vertex of the edge.</param>
-    /// <param name="vertex">If found, the starting vertex of the edge; otherwise, the default value of TVertex.</param>
-    /// <param name="edge">If found, the edge connecting the two vertices; otherwise, the default value of TEdge.</param>
-    /// <returns>The edge if it is found; otherwise, <see langword="null"/>.</returns>
     private bool TryGetEdge(
         TVertex v1, TVertex v2, 
         out Vertex<TVertex, TEdge>? vertex, 
         out Vertex<TVertex, TEdge>? vertex2, 
-        out Edge<TVertex, TEdge>? edge)
+        [NotNullWhen(true)] out Edge<TVertex, TEdge>? edge)
     {
         edge = null;
+        vertex2 = null;
 
-        TryGetVertex(v1, out vertex);
-        TryGetVertex(v2, out vertex2);
-
-        if (vertex is null ||
-            vertex2 is null)
+        if(TryGetVertex(v1, out vertex) is false || TryGetVertex(v2, out vertex2) is false)
         {
             return false;
         }
 
-        var localVertex2 = vertex2;
-        edge = vertex.Edges.Find(x => x.Sucessor.Equals(localVertex2));
+        edge = vertex.Edges.Find(e =>
+            EqualityComparer<TVertex>.Default.Equals(e.Sucessor, v2));
 
         return edge is not null;
     }
@@ -217,7 +188,7 @@ public class Graph<TVertex, TEdge>
     /// <inheritdoc cref="IGraph{TVertex, TEdge}.HasVertex(TVertex)"/>
     public bool HasVertex(TVertex vertex)
     {
-        return Vertexs.Exists(x => x.VertexName.Equals(vertex));
+        return _vertices.ContainsKey(vertex);
     }
 
     /// <summary>
@@ -226,11 +197,13 @@ public class Graph<TVertex, TEdge>
     /// <param name="name">The name of the vertex to search for.</param>
     /// <param name="vertex">The vertex with the given name, if it exists in the graph.</param>
     /// <returns>The vertex with the given name, if it exists in the graph.</returns>
-    public bool TryGetVertex(TVertex name, out Vertex<TVertex, TEdge>? vertex)
+    public bool TryGetVertex(
+        TVertex name, 
+        [NotNullWhen(true)] out Vertex<TVertex, TEdge>? vertex)
     {
-        vertex = Vertexs.Find(x => x.VertexName.Equals(name));
+        var exists = _vertices.TryGetValue(name, out vertex);
 
-        return vertex is not null;
+        return exists is true;
     }
 
     /// <summary>
@@ -239,16 +212,7 @@ public class Graph<TVertex, TEdge>
     /// <param name="item">The vertex to remove from the graph.</param>
     /// <returns>True if the vertex was successfully removed, false otherwise.</returns>
     public bool Remove(Vertex<TVertex, TEdge> item)
-    {
-        TryGetVertex(item.VertexName, out Vertex<TVertex, TEdge>? vertex);
-
-        if(vertex is null)
-        {
-            return false;
-        }
-
-        return Vertexs.Remove(vertex);
-    }
+        => RemoveVertex(item.VertexName);
 
     /// <inheritdoc cref="IGraph{TVertex, TEdge}.RemoveEdge(TVertex, TVertex)"/>
     public bool RemoveEdge(TVertex v1, TVertex v2)
@@ -275,14 +239,21 @@ public class Graph<TVertex, TEdge>
     /// <inheritdoc cref="IGraph{TVertex, TEdge}.RemoveVertex(TVertex)"/>
     public bool RemoveVertex(TVertex vertex)
     {
-        TryGetVertex(vertex, out Vertex<TVertex, TEdge>? vertexToRemove);
-        
-        if(vertexToRemove is null)
+        if (TryGetVertex(vertex, out _) is false)
         {
             return false;
         }
 
-        return Vertexs.Remove(vertexToRemove);
+        foreach (var v in _vertices.Values)
+        {
+            v.Edges.RemoveAll(e =>
+                EqualityComparer<TVertex>.Default.Equals(e.Sucessor, vertex) ||
+                EqualityComparer<TVertex>.Default.Equals(e.Predecessor, vertex));
+            v.Predecessors.RemoveAll(p => EqualityComparer<TVertex>.Default.Equals(p.VertexName, vertex));
+            v.Successors.RemoveAll(s => EqualityComparer<TVertex>.Default.Equals(s.VertexName, vertex));
+        }
+
+        return _vertices.Remove(vertex);
     }
 
     /// <summary>
@@ -291,7 +262,7 @@ public class Graph<TVertex, TEdge>
     /// <returns>An enumerator that can be used to iterate through the graph.</returns>
     IEnumerator IEnumerable.GetEnumerator()
     {
-        return Vertexs.GetEnumerator();
+        return _vertices.Keys.GetEnumerator();
 
     }
 
@@ -311,6 +282,29 @@ public class Graph<TVertex, TEdge>
         return vertex!.Successors;
     }
 
+    /// <inheritdoc cref="IGraph{TVertex, TEdge}.GetNeighbors(TVertex)"/>
+    public IEnumerable<TVertex> GetNeighbors(TVertex vertex)
+    {
+        if (TryGetVertex(vertex, out Vertex<TVertex, TEdge>? v) is false)
+        {
+            throw new NonExistentVertexException();
+        }
+
+        return v.Predecessors.Select(p => p.VertexName)
+            .Union(v.Successors.Select(s => s.VertexName));
+    }
+
+    /// <inheritdoc cref="IGraph{TVertex, TEdge}.Degree(TVertex)"/>
+    public int Degree(TVertex vertex)
+    {
+        if (TryGetVertex(vertex, out Vertex<TVertex, TEdge>? v) is false)
+        {
+            throw new NonExistentVertexException();
+        }
+
+        return v.Predecessors.Count + v.Successors.Count;
+    }
+
     /// <summary>
     /// Returns an enumerable of vertexes that are the predecessors of the specified vertex in the graph.
     /// </summary>
@@ -325,5 +319,33 @@ public class Graph<TVertex, TEdge>
         }
 
         return vertex!.Predecessors;
+    }
+
+    /// <inheritdoc cref="IGraph{TVertex, TEdge}.VertexCount"/>
+    public int VertexCount()
+    {
+        return _vertices.Count;
+    }
+
+    /// <inheritdoc cref="IGraph{TVertex, TEdge}.EdgeCount"/>
+    public int EdgeCount()
+    {
+        return _vertices.Values.Sum(v => v.Edges.Count);
+    }
+
+    /// <inheritdoc cref="IGraph{TVertex, TEdge}.GetVertices"/>
+    public IEnumerable<TVertex> GetVertices()
+    {
+        return _vertices.Keys;
+    }
+
+    /// <inheritdoc cref="IGraph{TVertex, TEdge}.GetEdges(TVertex)"/>
+    public IEnumerable<Edge<TVertex, TEdge>> GetEdges(TVertex vertex)
+    {
+        if (_vertices.TryGetValue(vertex, out var v))
+        {
+            return v.Edges;
+        }
+        return [];
     }
 }

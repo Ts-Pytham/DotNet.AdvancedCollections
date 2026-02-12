@@ -54,19 +54,45 @@ public interface IGraph<TVertex, TEdge>
     bool HasEdge(TVertex v1, TVertex v2);
 
     /// <summary>
-    /// Determines if the graph has a vertex with the given name.
+    /// Gets the number of vertices in the mesh.
     /// </summary>
-    /// <param name="name">The name of the vertex to search for.</param>
-    /// <param name="vertex">The vertex with the given name, if it exists in the graph.</param>
-    /// <returns>The vertex with the given name, if it exists in the graph.</returns>
-    bool TryGetVertex(TVertex name, out Vertex<TVertex, TEdge>? vertex);
+    /// <returns>The total number of vertices contained in the mesh.</returns>
+    int VertexCount();
 
     /// <summary>
-    /// Searches for an edge between two vertices and returns it if found.
+    /// Returns the total number of edges in the graph.
     /// </summary>
-    /// <param name="v1">The starting vertex of the edge.</param>
-    /// <param name="v2">The ending vertex of the edge.</param>
-    /// <param name="edge">If found, the edge connecting the two vertices; otherwise, the default value of TEdge.</param>
-    bool TryGetEdge(TVertex v1, TVertex v2, out Edge<TVertex, TEdge>? edge);
+    /// <returns>The number of edges currently present in the graph. Returns 0 if the graph contains no edges.</returns>
+    int EdgeCount();
 
+    /// <summary>
+    /// Returns an enumerable collection of all vertices in the graph.
+    /// </summary>
+    /// <returns>An <see cref="IEnumerable{TVertex}"/> containing the vertices of the graph. The collection may be empty if the
+    /// graph contains no vertices.</returns>
+    IEnumerable<TVertex> GetVertices();
+
+    /// <summary>
+    /// Returns a collection of edges that are connected to the specified vertex.
+    /// </summary>
+    /// <param name="vertex">The vertex for which to retrieve connected edges. Cannot be null.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing <see cref="Edge{TVertex, TEdge}"/> objects associated with 
+    /// the specified vertex. The collection will be empty if the
+    /// vertex has no connected edges.</returns>
+    IEnumerable<Edge<TVertex, TEdge>> GetEdges(TVertex vertex);
+
+    /// <summary>
+    /// Returns an enumerable collection of vertices that are directly connected to the specified vertex.
+    /// </summary>
+    /// <param name="vertex">The vertex for which to retrieve neighboring vertices. Must be a valid vertex in the graph.</param>
+    /// <returns>An enumerable collection of vertices adjacent to the specified vertex. If the vertex has no neighbors, the
+    /// collection is empty.</returns>
+    IEnumerable<TVertex> GetNeighbors(TVertex vertex);
+
+    /// <summary>
+    /// Gets the degree of the specified vertex.
+    /// </summary>
+    /// <param name="vertex">The vertex for which to calculate the degree. Cannot be null.</param>
+    /// <returns>The number of edges incident to the specified vertex.</returns>
+    int Degree(TVertex vertex);
 }
