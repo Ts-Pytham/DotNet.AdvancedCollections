@@ -10,7 +10,9 @@ This library provides efficient and well-tested implementations of:
 - **Queues**: `PriorityQueue<T>`, `Deque<T>`
 - **Stacks**: `PriorityStack<T>`
 - **Trees**: `BinarySearchTree<T>`, `BinaryTreeNode<T>`
-- **Graphs**: `Graph<T>`, support for directed and undirected graphs
+- **Graphs**: 
+  - `Graph<TVertex, TEdge>` (Adjacency List) - Sparse graphs, memory efficient
+  - `AdjacencyMatrixGraph<TVertex, TEdge>` - Dense graphs, O(1) edge lookups
 
 ## Getting Started
 
@@ -26,6 +28,7 @@ dotnet add package TsPytham.DotNet.AdvancedCollections
 using DotNet.AdvancedCollections.List.DoublyLinkedList;
 using DotNet.AdvancedCollections.Queue.PriorityQueue;
 using DotNet.AdvancedCollections.Tree.BinarySearchTree;
+using DotNet.AdvancedCollections.Graph;
 
 // Doubly linked list
 var list = new DoublyLinkedList<int>();
@@ -45,6 +48,21 @@ bst.Add(5);
 bst.Add(3);
 bst.Add(7);
 bool contains = bst.Contains(5); // true
+
+// Graph (Adjacency List) - Best for sparse graphs
+var sparseGraph = new Graph<string, int>
+{
+    new Vertex<string, int>("A"),
+    new Vertex<string, int>("B")
+};
+sparseGraph.AddEdge("A", "B", 10);
+
+// Graph (Adjacency Matrix) - Best for dense graphs, O(1) edge checks
+var denseGraph = new AdjacencyMatrixGraph<string, int>();
+denseGraph.AddVertex("A");
+denseGraph.AddVertex("B");
+denseGraph.AddEdge("A", "B", 10);
+bool hasEdge = denseGraph.HasEdge("A", "B"); // O(1) operation!
 ```
 
 ## Navigation
