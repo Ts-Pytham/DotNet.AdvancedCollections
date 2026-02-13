@@ -12,22 +12,34 @@ namespace DotNet.AdvancedCollections.Cache;
 /// multiple threads.</remarks>
 /// <typeparam name="TKey">The type of keys in the cache. Keys must be non-null and are used to uniquely identify cached values.</typeparam>
 /// <typeparam name="TValue">The type of values stored in the cache. Values must be non-null.</typeparam>
-/// <param name="capacity">The maximum number of key-value pairs the cache can hold. Must be a positive integer. When the cache reaches this
-/// capacity, adding a new item will evict the least recently used item. The default is 10.</param>
-public class LRUCache<TKey, TValue>(int capacity = 10) : ICache<TKey, TValue>
+public class LRUCache<TKey, TValue> : ICache<TKey, TValue>
     where TKey : notnull
     where TValue : notnull
 {
-    private readonly Dictionary<TKey, LRUCacheNode<TKey, TValue>> _cache = [];
+    private readonly Dictionary<TKey, LRUCacheNode<TKey, TValue>> _cache;
 
-    private LRUCacheNode<TKey, TValue>? _head = null;
-    private LRUCacheNode<TKey, TValue>? _tail = null;
+    private LRUCacheNode<TKey, TValue>? _head;
+    private LRUCacheNode<TKey, TValue>? _tail;
 
     /// <inheritdoc cref="ICache{TKey, TValue}.Count"/>
     public int Count { get; private set; } = 0;
 
     /// <inheritdoc cref="ICache{TKey, TValue}.Capacity"/>
-    public int Capacity { get; } = capacity;
+    public int Capacity { get; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LRUCache{TKey, TValue}"/> class with the specified capacity.
+    /// </summary>
+    /// <param name="capacity">The maximum number of key-value pairs the cache can hold. Must be a positive integer. The default is 10.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="capacity"/> is less than or equal to zero.</exception>
+    public LRUCache(int capacity = 10)
+    {
+        _cache = [];
+        _head = null;
+        _tail = null;
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(capacity);
+        Capacity = capacity;
+    }
 
     /// <inheritdoc cref="ICache{TKey, TValue}.Clear"/>
     public void Clear()
