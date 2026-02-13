@@ -10,7 +10,9 @@
 
     <!-- Package Information -->
     <PackageId>TsPytham.DotNet.AdvancedCollections</PackageId>
-    <Version>1.0.0</Version>
+    <!-- Version is automatically determined by MinVer from Git tags -->
+    <MinVerTagPrefix></MinVerTagPrefix>
+    <MinVerDefaultPreReleaseIdentifiers>preview.0</MinVerDefaultPreReleaseIdentifiers>
     <Authors>Ts-Pytham</Authors>
     <Company>Ts-Pytham</Company>
     <Product>DotNet.AdvancedCollections</Product>
@@ -33,6 +35,13 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MinVer" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
