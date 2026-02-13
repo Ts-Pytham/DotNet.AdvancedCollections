@@ -12,7 +12,6 @@
     <PackageId>TsPytham.DotNet.AdvancedCollections</PackageId>
     <!-- Version is automatically determined by MinVer from Git tags -->
     <MinVerTagPrefix></MinVerTagPrefix>
-    <MinVerDefaultPreReleaseIdentifiers>preview.0</MinVerDefaultPreReleaseIdentifiers>
     <Authors>Ts-Pytham</Authors>
     <Company>Ts-Pytham</Company>
     <Product>DotNet.AdvancedCollections</Product>
