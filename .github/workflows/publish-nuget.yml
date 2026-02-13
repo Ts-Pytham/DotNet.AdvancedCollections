@@ -12,6 +12,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for all tags and branches (required for MinVer)
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -24,6 +26,9 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
 
+    - name: Display calculated version
+      run: dotnet msbuild src/DotNet.AdvancedCollections/DotNet.AdvancedCollections.csproj -getProperty:Version -nologo
+
     - name: Run tests
       run: dotnet test --configuration Release --no-build --verbosity normal
 
@@ -34,8 +39,8 @@ jobs:
       run: ls -la ./artifacts/
 
     - name: Push to NuGet
-      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
 
     - name: Push symbols to NuGet
-      run: dotnet nuget push ./artifacts/*.snupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push ./artifacts/*.snupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
       continue-on-error: true
