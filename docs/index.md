@@ -7,6 +7,7 @@ This guide will help you get started with DotNet.AdvancedCollections in your pro
 - [Lists](lists.md)
 - [Queues](queues.md)
 - [Stacks](stacks.md)
+- [Caches](caches.md)
 - [Trees](trees.md)
 - [Graphs](graphs.md)
 
