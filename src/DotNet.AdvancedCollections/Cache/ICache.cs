@@ -1,4 +1,6 @@
-﻿namespace DotNet.AdvancedCollections.Cache;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace DotNet.AdvancedCollections.Cache;
 
 /// <summary>
 /// Defines a generic cache that stores key-value pairs and provides methods for adding, retrieving, and removing items.
@@ -25,11 +27,11 @@ public interface ICache<TKey, TValue>
     /// <summary>
     /// Attempts to retrieve the value associated with the specified key.
     /// </summary>
-    /// <param name="key">The key whose associated value is to be retrieved.</param>
+    /// <param name="key">The key whose value to retrieve.</param>
     /// <param name="value">When this method returns, contains the value associated with the specified key, if the key is found; otherwise,
     /// the default value for the type of the value parameter. This parameter is passed uninitialized.</param>
-    /// <returns>true if the object that implements the method contains an element with the specified key; otherwise, false.</returns>
-    bool TryGet(TKey key, out TValue value);
+    /// <returns>true if the object that implements the interface contains an element with the specified key; otherwise, false.</returns>
+    bool TryGet(TKey key, [NotNullWhen(true)] out TValue? value);
 
     /// <summary>
     /// Adds or updates the value associated with the specified key.
