@@ -63,9 +63,10 @@ New data structures were added that are derived from the traditional data struct
 - **Deque** - Double-ended queue
 - **PriorityQueue** - Priority-based queue
 - **PriorityStack** - Priority-based stack
-- **Binary Search Tree** - Self-balancing BST
+- **Binary Search Tree** - Standard BST (not self-balancing)
 - **SortedList** - Automatically sorted list
 - **DoublyLinkedList** - Two-way linked list
+- **LRUCache** - Least Recently Used cache with fixed capacity
 - **Graph** (Adjacency List) - Dictionary-based graph for sparse graphs
 - **AdjacencyMatrixGraph** - Matrix-based graph for dense graphs and fast edge lookups
 
@@ -249,6 +250,52 @@ total items: 7
 
 This implementation is different from the one implemented in `System.Collections.Generic` because this implementation does not use a key, and any class to be used must implement the `IComparable` interface. It is very important to review this implementation and documentation.
 
+### Cache
+
+A cache is a high-speed data storage layer that stores a subset of data, typically transient in nature, so that future requests for that data are served faster. Caches are used to improve application performance and reduce latency.
+
+- **LRUCache**: A Least Recently Used (LRU) cache is a fixed-capacity cache that evicts the least recently accessed items when it reaches its capacity limit. This ensures that frequently accessed items remain in the cache while rarely used items are removed, making it ideal for scenarios like API response caching, session data, or database query results.
+
+**Example in code:**
+
+```C#
+// Create a cache with capacity of 3
+LRUCache<int, string> cache = new(capacity: 3);
+
+// Add items
+cache.Put(1, "one");
+cache.Put(2, "two");
+cache.Put(3, "three");
+
+Console.WriteLine($"Cache count: {cache.Count}");
+
+// Access an item (makes it "recently used")
+if (cache.TryGet(1, out var value))
+{
+    Console.WriteLine($"Key 1: {value}");
+}
+
+// Add another item - will evict the least recently used (key 2)
+cache.Put(4, "four");
+
+Console.WriteLine($"Contains key 2: {cache.ContainsKey(2)}"); // False - was evicted
+Console.WriteLine($"Contains key 1: {cache.ContainsKey(1)}"); // True - was recently accessed
+
+/*
+Output:
+Cache count: 3
+Key 1: one
+Contains key 2: False
+Contains key 1: True
+*/
+```
+
+**Key Features:**
+- Fixed capacity with automatic eviction
+- O(1) time complexity for Put, Get, and Contains operations
+- Thread-unsafe (external synchronization required for concurrent access)
+- Generic implementation supporting any non-null key and value types
+
 ### Tree
 
 A tree is a data structure consisting of linked nodes. Nodes can have one or more children and each node can have a relationship with other nodes in the tree.
@@ -398,6 +445,31 @@ Neighbor: C
 > ?? **Choosing the right implementation:**
 > - Use `Graph` for sparse graphs and traversal-heavy workloads
 > - Use `AdjacencyMatrixGraph` for dense graphs and edge-lookup-heavy workloads
+
+---
+
+## Roadmap
+
+The following features and improvements are planned for future releases:
+
+### ?? Upcoming Data Structures
+
+- **AVL Tree** - Self-balancing binary search tree with strict height balance
+- **Skip List** - Probabilistic data structure for fast search, insertion, and deletion (O(log n) average)
+- **Indexed Priority Queue** - Priority queue with efficient index-based access and priority updates
+
+### ?? Thread-Safe Variants
+
+Selected data structures will receive thread-safe implementations:
+
+- Thread-safe collections wrapper/decorators
+- Concurrent-optimized variants for high-performance scenarios
+- Lock-free implementations where applicable
+
+> **Note:** These features are planned but not yet scheduled for specific releases.\
+> Contributions and feedback are welcome!
+
+---
 
 ## Project status
 
