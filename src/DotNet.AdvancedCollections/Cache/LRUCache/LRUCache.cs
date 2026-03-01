@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using DotNet.AdvancedCollections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DotNet.AdvancedCollections.Cache;
 
@@ -12,7 +13,7 @@ namespace DotNet.AdvancedCollections.Cache;
 /// multiple threads.</remarks>
 /// <typeparam name="TKey">The type of keys in the cache. Keys must be non-null and are used to uniquely identify cached values.</typeparam>
 /// <typeparam name="TValue">The type of values stored in the cache. Values must be non-null.</typeparam>
-public class LRUCache<TKey, TValue> : ICache<TKey, TValue>
+public class LRUCache<TKey, TValue> : ICache<TKey, TValue>, ISynchronized
     where TKey : notnull
     where TValue : notnull
 {
@@ -22,7 +23,15 @@ public class LRUCache<TKey, TValue> : ICache<TKey, TValue>
     private LRUCacheNode<TKey, TValue>? _tail;
 
     /// <inheritdoc cref="ICache{TKey, TValue}.Count"/>
-    public int Count { get; private set; } = 0;
+    public int Count { get; private set; }
+
+    /// <inheritdoc cref="ISynchronized.IsSynchronized"/>
+    public bool IsSynchronized => false;
+
+    internal readonly object _syncRoot = new();
+
+    /// <inheritdoc cref="ISynchronized.SyncRoot"/>
+    object ISynchronized.SyncRoot => _syncRoot;
 
     /// <inheritdoc cref="ICache{TKey, TValue}.Capacity"/>
     public int Capacity { get; }
@@ -34,10 +43,8 @@ public class LRUCache<TKey, TValue> : ICache<TKey, TValue>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="capacity"/> is less than or equal to zero.</exception>
     public LRUCache(int capacity = 10)
     {
-        _cache = [];
-        _head = null;
-        _tail = null;
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(capacity);
+        _cache = [];
         Capacity = capacity;
     }
 
@@ -209,4 +216,77 @@ public class LRUCache<TKey, TValue> : ICache<TKey, TValue>
         _head!.Previous = node;
         _head = node;
     }
+
+    public ICache<TKey, TValue> Synchronized()
+        => new SynchronizedLRUCache(this);
+
+
+
+    internal class SynchronizedLRUCache(LRUCache<TKey, TValue> innerCache) 
+        : ICache<TKey, TValue>
+    {
+        private readonly object _syncRoot = innerCache._syncRoot;
+
+        public int Count 
+        {
+            get
+            {
+                lock (_syncRoot)
+                {
+                    return innerCache.Count;
+                }
+            }
+        }
+
+        public int Capacity => innerCache.Capacity;
+
+        public void Clear()
+        {
+            lock (_syncRoot)
+            {
+                innerCache.Clear();
+            }
+        }
+
+        public bool ContainsKey(TKey key)
+        {
+            lock (_syncRoot)
+            {
+                return innerCache.ContainsKey(key);
+            }
+        }
+
+        public void Put(TKey key, TValue value)
+        {
+            lock (_syncRoot)
+            {
+                innerCache.Put(key, value);
+            }
+        }
+
+        public void Remove(TKey key)
+        {
+            lock (_syncRoot)
+            {
+                innerCache.Remove(key);
+            }
+        }
+
+        public bool TryAdd(TKey key, TValue value)
+        {
+            lock (_syncRoot)
+            {
+                return innerCache.TryAdd(key, value);
+            }
+        }
+
+        public bool TryGet(TKey key, [NotNullWhen(true)] out TValue? value)
+        {
+            lock (_syncRoot)
+            {
+                return innerCache.TryGet(key, out value);
+            }
+        }
+    }
+
 }
