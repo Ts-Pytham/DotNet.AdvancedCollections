@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using DotNet.AdvancedCollections.Concurrent;
+using System.Collections;
 
 namespace DotNet.AdvancedCollections.List.DoublyLinkedList;
 
@@ -7,7 +8,7 @@ namespace DotNet.AdvancedCollections.List.DoublyLinkedList;
 /// connected to two other elements, usually referred to as the previous and next element.
 /// </summary>
 /// <typeparam name="T">The type of elements in the list.</typeparam>
-public class DoublyLinkedList<T> : IDoublyLinkedList<T>, IEnumerable<T>, ICollection<T>
+public class DoublyLinkedList<T> : IDoublyLinkedList<T>, IEnumerable<T>, ICollection<T>, ISynchronized
     where T : notnull
 {
     private Node<T>? _head;
@@ -42,6 +43,13 @@ public class DoublyLinkedList<T> : IDoublyLinkedList<T>, IEnumerable<T>, ICollec
     /// Gets a value indicating whether access to the doubly linked list is synchronized (thread-safe).
     /// </summary>
     public bool IsSynchronized => false;
+
+    internal readonly object _syncRoot = new();
+
+    /// <summary>
+    /// Gets an object that can be used to synchronize access to the collection.
+    /// </summary>
+    object ISynchronized.SyncRoot => _syncRoot;
 
     /// <summary>
     /// Constructs a new instance of the <see cref="DoublyLinkedList{T}"/> class.
@@ -375,18 +383,18 @@ public class DoublyLinkedList<T> : IDoublyLinkedList<T>, IEnumerable<T>, ICollec
         return new SynchronizedDoublyLinkedList(this);
     }
 
-    public static IDoublyLinkedList<T> Synchronized(DoublyLinkedList<T> list)
+    public static IDoublyLinkedList<T> Synchronized(IDoublyLinkedList<T> list)
         => new SynchronizedDoublyLinkedList(list);
 
     internal class SynchronizedDoublyLinkedList : IDoublyLinkedList<T>
     {
-        private readonly DoublyLinkedList<T> _list;
+        private readonly IDoublyLinkedList<T> _list;
         private readonly object _lock;
 
-        internal SynchronizedDoublyLinkedList(DoublyLinkedList<T> list)
+        internal SynchronizedDoublyLinkedList(IDoublyLinkedList<T> list)
         {
             _list = list;
-            _lock = new object();
+            _lock = list is ISynchronized sync ? sync.SyncRoot : new object();
         }
 
         public T this[int index]

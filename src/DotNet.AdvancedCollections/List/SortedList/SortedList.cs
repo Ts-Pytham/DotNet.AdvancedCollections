@@ -65,18 +65,12 @@ public class SortedList<T> : ISortedList<T>, ICollection<T>, IEnumerable<T>, IRe
     /// </summary>
     public bool IsSynchronized => false;
 
-    private readonly Lazy<object> _syncRoot = new(() => new object());
+    internal readonly object _syncRoot = new();
 
     /// <summary>
     /// Gets an object that can be used to synchronize access to the collection.
     /// </summary>
-    /// <remarks>Use the object returned by this property when implementing thread-safe operations on the
-    /// collection. Synchronization is required when multiple threads access the collection concurrently and at least
-    /// one thread modifies the collection.</remarks>
-    public object SyncRoot
-    {
-        get => _syncRoot.Value;
-    }
+    object ISynchronized.SyncRoot => _syncRoot;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SortedList{T}"/> class and initialize the criterion to ascending by default.
@@ -293,26 +287,25 @@ public class SortedList<T> : ISortedList<T>, ICollection<T>, IEnumerable<T>, IRe
     internal class SynchronizedSortedList : ISortedList<T>
     {
         private readonly SortedList<T> _sortedList;
-        private readonly object _lock;
+        private object Lock => _sortedList._syncRoot;
 
         internal SynchronizedSortedList(SortedList<T> sortedList)
         {
             _sortedList = sortedList;
-            _lock = _sortedList.SyncRoot;
         }
 
         public T this[int index]
         {
             get
             {
-                lock (_lock)
+                lock (Lock)
                 {
                     return _sortedList[index];
                 }
             }
             set
             {
-                lock (_lock)
+                lock (Lock)
                 {
                     _sortedList[index] = value;
                 }
@@ -323,7 +316,7 @@ public class SortedList<T> : ISortedList<T>, ICollection<T>, IEnumerable<T>, IRe
         {
             get
             {
-                lock (_lock)
+                lock (Lock)
                 {
                     return _sortedList.Count;
                 }
@@ -336,7 +329,7 @@ public class SortedList<T> : ISortedList<T>, ICollection<T>, IEnumerable<T>, IRe
 
         public void Add(T item)
         {
-            lock (_lock)
+            lock (Lock)
             {
                 _sortedList.Add(item);
             }
@@ -344,7 +337,7 @@ public class SortedList<T> : ISortedList<T>, ICollection<T>, IEnumerable<T>, IRe
 
         public void Clear()
         {
-            lock (_lock)
+            lock (Lock)
             {
                 _sortedList.Clear();
             }
@@ -352,7 +345,7 @@ public class SortedList<T> : ISortedList<T>, ICollection<T>, IEnumerable<T>, IRe
 
         public bool Contains(T item)
         {
-            lock (_lock)
+            lock (Lock)
             {
                 return _sortedList.Contains(item);
             }
@@ -360,7 +353,7 @@ public class SortedList<T> : ISortedList<T>, ICollection<T>, IEnumerable<T>, IRe
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            lock (_lock)
+            lock (Lock)
             {
                 _sortedList.CopyTo(array, arrayIndex);
             }
@@ -368,7 +361,7 @@ public class SortedList<T> : ISortedList<T>, ICollection<T>, IEnumerable<T>, IRe
 
         public IEnumerator<T> GetEnumerator()
         {
-            lock (_lock)
+            lock (Lock)
             {
                 return _sortedList.GetEnumerator();
             }
@@ -376,7 +369,7 @@ public class SortedList<T> : ISortedList<T>, ICollection<T>, IEnumerable<T>, IRe
 
         public int IndexOf(T item)
         {
-            lock (_lock)
+            lock (Lock)
             {
                 return _sortedList.IndexOf(item);
             }
@@ -384,7 +377,7 @@ public class SortedList<T> : ISortedList<T>, ICollection<T>, IEnumerable<T>, IRe
 
         public bool Remove(T item)
         {
-            lock (_lock)
+            lock (Lock)
             {
                 return _sortedList.Remove(item);
             }
@@ -392,7 +385,7 @@ public class SortedList<T> : ISortedList<T>, ICollection<T>, IEnumerable<T>, IRe
 
         public void RemoveAt(int index)
         {
-            lock (_lock)
+            lock (Lock)
             {
                 _sortedList.RemoveAt(index);
             }
@@ -400,7 +393,7 @@ public class SortedList<T> : ISortedList<T>, ICollection<T>, IEnumerable<T>, IRe
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            lock (_lock)
+            lock (Lock)
             {
                 return _sortedList.GetEnumerator();
             }
