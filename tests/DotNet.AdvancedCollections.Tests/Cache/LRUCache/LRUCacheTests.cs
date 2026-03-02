@@ -1,6 +1,3 @@
-using DotNet.AdvancedCollections.Cache;
-using FluentAssertions;
-
 namespace DotNet.AdvancedCollections.Tests.Cache.LRUCache;
 
 /// <summary>
@@ -628,6 +625,250 @@ public class LRUCacheTests
         result.Should().BeTrue();
         cache.Count.Should().Be(2);
         cache.ContainsKey(1).Should().BeFalse("key 1 should have been evicted");
+    }
+
+    #endregion
+
+    #region Constructor Validation Tests
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(-100)]
+    public void Constructor_InvalidCapacity_ShouldThrow(int capacity)
+    {
+        // Arrange & Act
+        Action act = () => new LRUCache<int, string>(capacity);
+
+        // Assert
+        act.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    #endregion
+
+    #region Synchronized Tests
+
+    [Fact]
+    public void Synchronized_ShouldReturnICache()
+    {
+        // Arrange
+        var cache = new LRUCache<int, string>(3);
+
+        // Act
+        var sync = cache.Synchronized();
+
+        // Assert
+        sync.Should().BeAssignableTo<ICache<int, string>>();
+    }
+
+    [Fact]
+    public void Synchronized_Capacity_ShouldMatchOriginal()
+    {
+        // Arrange
+        var cache = new LRUCache<int, string>(5);
+
+        // Act
+        var sync = cache.Synchronized();
+
+        // Assert
+        sync.Capacity.Should().Be(cache.Capacity);
+    }
+
+    [Fact]
+    public void Synchronized_Put_ShouldAddItem()
+    {
+        // Arrange
+        var cache = new LRUCache<int, string>(3);
+        var sync = cache.Synchronized();
+
+        // Act
+        sync.Put(1, "one");
+
+        // Assert
+        sync.Count.Should().Be(1);
+    }
+
+    [Fact]
+    public void Synchronized_TryGet_ShouldReturnCorrectValue()
+    {
+        // Arrange
+        var cache = new LRUCache<int, string>(3);
+        var sync = cache.Synchronized();
+        sync.Put(1, "one");
+
+        // Act
+        bool result = sync.TryGet(1, out var value);
+
+        // Assert
+        result.Should().BeTrue();
+        value.Should().Be("one");
+    }
+
+    [Fact]
+    public void Synchronized_TryGet_NonExistingKey_ShouldReturnFalse()
+    {
+        // Arrange
+        var cache = new LRUCache<int, string>(3);
+        var sync = cache.Synchronized();
+
+        // Act
+        bool result = sync.TryGet(99, out var value);
+
+        // Assert
+        result.Should().BeFalse();
+        value.Should().BeNull();
+    }
+
+    [Fact]
+    public void Synchronized_ContainsKey_ShouldReturnTrue()
+    {
+        // Arrange
+        var cache = new LRUCache<int, string>(3);
+        var sync = cache.Synchronized();
+        sync.Put(1, "one");
+
+        // Act & Assert
+        sync.ContainsKey(1).Should().BeTrue();
+    }
+
+    [Fact]
+    public void Synchronized_Remove_ShouldRemoveItem()
+    {
+        // Arrange
+        var cache = new LRUCache<int, string>(3);
+        var sync = cache.Synchronized();
+        sync.Put(1, "one");
+
+        // Act
+        sync.Remove(1);
+
+        // Assert
+        sync.Count.Should().Be(0);
+        sync.ContainsKey(1).Should().BeFalse();
+    }
+
+    [Fact]
+    public void Synchronized_TryAdd_NewKey_ShouldReturnTrue()
+    {
+        // Arrange
+        var cache = new LRUCache<int, string>(3);
+        var sync = cache.Synchronized();
+
+        // Act
+        bool result = sync.TryAdd(1, "one");
+
+        // Assert
+        result.Should().BeTrue();
+        sync.Count.Should().Be(1);
+    }
+
+    [Fact]
+    public void Synchronized_TryAdd_ExistingKey_ShouldReturnFalse()
+    {
+        // Arrange
+        var cache = new LRUCache<int, string>(3);
+        var sync = cache.Synchronized();
+        sync.Put(1, "one");
+
+        // Act
+        bool result = sync.TryAdd(1, "ONE");
+
+        // Assert
+        result.Should().BeFalse();
+        sync.Count.Should().Be(1);
+    }
+
+    [Fact]
+    public void Synchronized_Clear_ShouldRemoveAllItems()
+    {
+        // Arrange
+        var cache = new LRUCache<int, string>(3);
+        var sync = cache.Synchronized();
+        sync.Put(1, "one");
+        sync.Put(2, "two");
+
+        // Act
+        sync.Clear();
+
+        // Assert
+        sync.Count.Should().Be(0);
+    }
+
+    [Fact]
+    public void Synchronized_LRUEviction_ShouldStillWork()
+    {
+        // Arrange
+        var cache = new LRUCache<int, string>(2);
+        var sync = cache.Synchronized();
+
+        // Act
+        sync.Put(1, "one");
+        sync.Put(2, "two");
+        sync.Put(3, "three"); // Evicts key 1
+
+        // Assert
+        sync.Count.Should().Be(2);
+        sync.ContainsKey(1).Should().BeFalse("key 1 should have been evicted");
+        sync.ContainsKey(2).Should().BeTrue();
+        sync.ContainsKey(3).Should().BeTrue();
+    }
+
+    [Fact]
+    public void Synchronized_MultipleWrappers_ShouldShareState()
+    {
+        // Arrange
+        var cache = new LRUCache<int, string>(3);
+        var sync1 = cache.Synchronized();
+        var sync2 = cache.Synchronized();
+
+        // Act
+        sync1.Put(1, "one");
+        sync1.Put(2, "two");
+
+        // Assert — sync2 must see what sync1 added
+        sync2.Count.Should().Be(2);
+        sync2.ContainsKey(1).Should().BeTrue();
+        sync2.ContainsKey(2).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Synchronized_ConcurrentWrites_ShouldNotCorruptState()
+    {
+        // Arrange
+        var cache = new LRUCache<int, string>(50);
+        var sync = cache.Synchronized();
+
+        // Act — 100 tasks each writing a unique key
+        await Task.WhenAll(
+            Enumerable.Range(0, 100)
+                      .Select(i => Task.Run(() => sync.Put(i, $"value_{i}"))));
+
+        // Assert
+        sync.Count.Should().BeLessThanOrEqualTo(sync.Capacity);
+        sync.Count.Should().BeGreaterThan(0);
+    }
+
+    [Fact]
+    public async Task Synchronized_ConcurrentReadAndWrite_ShouldNotThrow()
+    {
+        // Arrange
+        var cache = new LRUCache<int, string>(10);
+        var sync = cache.Synchronized();
+        for (int i = 0; i < 10; i++)
+            sync.Put(i, $"value_{i}");
+
+        // Act
+        Func<Task> act = async () =>
+        {
+            var writers = Enumerable.Range(10, 50)
+                .Select(i => Task.Run(() => sync.Put(i, $"value_{i}")));
+            var readers = Enumerable.Range(0, 50)
+                .Select(_ => Task.Run(() => { sync.TryGet(5, out string? _); }));
+            await Task.WhenAll([.. writers, .. readers]);
+        };
+
+        // Assert
+        await act.Should().NotThrowAsync();
     }
 
     #endregion

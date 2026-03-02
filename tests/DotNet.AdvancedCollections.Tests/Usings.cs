@@ -1,4 +1,5 @@
-﻿global using DotNet.AdvancedCollections.Graph;
+﻿global using DotNet.AdvancedCollections.Cache;
+global using DotNet.AdvancedCollections.Graph;
 global using DotNet.AdvancedCollections.Exceptions;
 global using DotNet.AdvancedCollections.Queue.Deque;
 global using DotNet.AdvancedCollections.Queue.PriorityQueue;
