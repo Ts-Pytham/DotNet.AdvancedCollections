@@ -44,7 +44,7 @@ public class LRUCache<TKey, TValue> : ICache<TKey, TValue>, ISynchronized
     public LRUCache(int capacity = 10)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(capacity);
-        _cache = [];
+        _cache = new Dictionary<TKey, LRUCacheNode<TKey, TValue>>(capacity);
         Capacity = capacity;
     }
 
@@ -80,11 +80,10 @@ public class LRUCache<TKey, TValue> : ICache<TKey, TValue>, ISynchronized
     /// <inheritdoc cref="ICache{TKey, TValue}.Remove"/>
     public void Remove(TKey key)
     {
-        if (!_cache.TryGetValue(key, out var node))
+        if (!_cache.Remove(key, out var node))
             return;
 
         RemoveNode(node);
-        _cache.Remove(key);
     }
 
     /// <inheritdoc cref="ICache{TKey, TValue}.TryAdd(TKey, TValue)"/>
